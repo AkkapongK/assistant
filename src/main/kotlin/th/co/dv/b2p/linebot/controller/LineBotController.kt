@@ -51,7 +51,7 @@ class LineBotController {
         logger.info(".....handleTextMessage......")
         logger.info(event.toString())
         val message: TextMessageContent = event.message!!
-        handleTextContent(event.getReplyToken(), event, message)
+        handleTextContent(event.replyToken, event, message)
     }
 
     fun String.toArgument() = this.split(" ").map { it.trim() }.toMutableList()
@@ -70,7 +70,8 @@ class LineBotController {
 
         when (command) {
             Constant.Command.RELEASE -> findReleaseForService(replyToken, arg)
-            Constant.Command.JIRA -> processJira(replyToken, arg)
+//            Constant.Command.JIRA -> processJira(replyToken, arg)
+            Constant.Command.JIRA -> this.replyFlexMessage(replyToken, arg)
             else -> this.replyText(replyToken, HELP)
         }
     }
@@ -87,6 +88,7 @@ class LineBotController {
                 "akkapong.k@dv.co.th:UgBUFfAzLelbbNQv4UHlDA55"))
 
         val node = mapper.readTree(response)
+
         val output = getInformationFromStory(node, bloc, tag) ?: TAG_NOT_FOUND
         this.replyText(replyToken, output)
     }
@@ -247,6 +249,15 @@ class LineBotController {
             e.printStackTrace()
             return null
         }
+    }
+
+    /**
+     * Method for reply Flex message
+     */
+    private fun replyFlexMessage(replyToken: String, arg: List<String>) {
+        val story = arg.firstOrNull() ?: this.replyText(replyToken, STORY_NOT_FOUND)
+        val jiraFlexMessage = JiraFlexMessage(story.toString())
+        this.reply(replyToken, jiraFlexMessage.get())
     }
 
     /**
