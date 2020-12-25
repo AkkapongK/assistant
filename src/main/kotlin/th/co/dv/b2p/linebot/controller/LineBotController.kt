@@ -139,9 +139,8 @@ class LineBotController {
      *
      */
     private fun JsonNode.getFixVersion(): String {
-        val issue = this.get("issues").first()
-        val fields = issue.get("fields")
-        val fixVersions = fields.get("fixVersions")
+
+        val fixVersions = this.get("fixVersions")
 
         val versions = fixVersions.map {
             it.get("name").toString().replace("\"", "")
@@ -155,9 +154,7 @@ class LineBotController {
      *
      */
     private fun JsonNode.getStatus(): String {
-        val issue = this.get("issues").first()
-        val fields = issue.get("fields")
-        val status = fields.get("status")
+        val status = this.get("status")
         return status.get("name").toString().replace("\"", "")
     }
 
@@ -165,9 +162,11 @@ class LineBotController {
      * get information from story
      */
     private fun getInformationFromStory(response: JsonNode, bloc: String, tag: String): String? {
+        val issue = response.get("issues").first()
+        val fields = issue.get("fields")
         return when (tag.toLowerCase()) {
-            "fixversions" -> response.getFixVersion()
-            "status" -> response.getStatus()
+            "fixversions" -> fields.getFixVersion()
+            "status" -> fields.getStatus()
             else -> response.getInformation(bloc)
         }
     }
