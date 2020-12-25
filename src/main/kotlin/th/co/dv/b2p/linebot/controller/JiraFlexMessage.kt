@@ -121,7 +121,7 @@ class JiraFlexMessage(private val story: String) : Supplier<FlexMessage> {
         val carousel = Carousel.builder()
                 .contents(listOf(jiraResult))
                 .build()
-        return FlexMessage("Catalogue", carousel)
+        return FlexMessage("Jira story information", carousel)
     }
 
     private fun createBubble(): Bubble {
