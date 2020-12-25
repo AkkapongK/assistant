@@ -19,12 +19,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import th.co.dv.b2p.linebot.config.GitConfig
 import th.co.dv.b2p.linebot.constant.*
 import th.co.dv.b2p.linebot.constant.Constant.ASSIGNEE
+import th.co.dv.b2p.linebot.constant.Constant.COMPONENT
 import th.co.dv.b2p.linebot.constant.Constant.Curl.jiraUrl
 import th.co.dv.b2p.linebot.constant.Constant.DEVELOPER
 import th.co.dv.b2p.linebot.constant.Constant.DEVELOPER_TAG
+import th.co.dv.b2p.linebot.constant.Constant.FIXVERSION
 import th.co.dv.b2p.linebot.constant.Constant.HELP
 import th.co.dv.b2p.linebot.constant.Constant.INFORMATION
 import th.co.dv.b2p.linebot.constant.Constant.REPORTER
+import th.co.dv.b2p.linebot.constant.Constant.STATUS
 import th.co.dv.b2p.linebot.constant.Constant.STORY
 import th.co.dv.b2p.linebot.utilities.Utils.getEnumIgnoreCase
 import java.io.IOException
@@ -100,6 +103,12 @@ class LineBotController {
      * Get reporter
      */
     private fun JsonNode.getReport() = this.get("creator").get("displayName").toString()
+    /**
+     * Get reporter
+     */
+    private fun JsonNode.getComponents() = this.get("components").map {
+        it.get("name").toString().replace("\"", "")
+    }.joinToString()
 
     /**
      * Method to get get assignee
@@ -111,12 +120,18 @@ class LineBotController {
         val assignee = fields.getAssignee()
         val developer = fields.getDeveloper()
         val reporter = fields.getReport()
+        val components = fields.getComponents()
+        val fixVersions = fields.getFixVersion()
+        val status = fields.getStatus()
 
         return INFORMATION
                 .replace(ASSIGNEE, assignee)
                 .replace(DEVELOPER, developer)
                 .replace(REPORTER, reporter)
                 .replace(STORY, bloc)
+                .replace(COMPONENT, components)
+                .replace(FIXVERSION, fixVersions)
+                .replace(STATUS, status)
     }
 
     /**

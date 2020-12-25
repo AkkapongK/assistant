@@ -35,7 +35,7 @@ object Constant {
         argument: 
             - Target story: BLOC-XXX
             - Tatget tag: 
-                - fixversion : release branch that merge
+                - fixversions : release branch that merge
                 - status : current status
         usage: jira [story] [tag(optional)]
         example: jira BLOC-13500 status
@@ -46,10 +46,18 @@ object Constant {
     const val DEVELOPER = "[DEVELOPER]"
     const val REPORTER = "[REPORTER]"
     const val STORY = "[STORY]"
+    const val COMPONENT = "[COMPONENT]"
+    const val FIXVERSION = "[FIXVERSION]"
+    const val STATUS = "[STATUS]"
     const val INFORMATION = """
         Assignee name: $ASSIGNEE
         Developer name: $DEVELOPER
         Reporter name: $REPORTER
+        
+        Status: $STATUS
+        Components: $COMPONENT
+        Fix versions: $FIXVERSION
+        
         
         Link jira: https://scb-digitalventures.atlassian.net/browse/$STORY
     """
