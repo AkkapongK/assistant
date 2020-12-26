@@ -29,6 +29,7 @@ import th.co.dv.b2p.linebot.constant.Constant.INFORMATION
 import th.co.dv.b2p.linebot.constant.Constant.REPORTER
 import th.co.dv.b2p.linebot.constant.Constant.STATUS
 import th.co.dv.b2p.linebot.constant.Constant.STORY
+import th.co.dv.b2p.linebot.services.CovidService
 import th.co.dv.b2p.linebot.utilities.Utils.getEnumIgnoreCase
 import java.io.IOException
 import java.util.concurrent.ExecutionException
@@ -38,6 +39,9 @@ class LineBotController {
 
     @Autowired
     lateinit var gitConfig: GitConfig
+
+    @Autowired
+    lateinit var covidService: CovidService
 
     @Autowired
     lateinit var lineMessagingClient: LineMessagingClient
@@ -71,7 +75,8 @@ class LineBotController {
         when (command) {
             Constant.Command.RELEASE -> findReleaseForService(replyToken, arg)
 //            Constant.Command.JIRA -> processJira(replyToken, arg)
-            Constant.Command.JIRA -> this.replyFlexMessage(replyToken, arg)
+            Constant.Command.JIRA -> this.replyJiraFlexMessage(replyToken, arg)
+            Constant.Command.COVID -> this.replyCovidFlexMessage(replyToken)
             else -> this.replyText(replyToken, HELP)
         }
     }
@@ -254,7 +259,14 @@ class LineBotController {
     /**
      * Method for reply Flex message
      */
-    private fun replyFlexMessage(replyToken: String, arg: List<String>) {
+    private fun replyCovidFlexMessage(replyToken: String) {
+        this.reply(replyToken, CovidFlexMessage(covidService).get())
+    }
+
+    /**
+     * Method for reply Flex message
+     */
+    private fun replyJiraFlexMessage(replyToken: String, arg: List<String>) {
         val story = arg.firstOrNull() ?: this.replyText(replyToken, STORY_NOT_FOUND)
         val jiraFlexMessage = JiraFlexMessage(story.toString())
         this.reply(replyToken, jiraFlexMessage.get())

@@ -4,7 +4,8 @@ object Constant {
 
     enum class Command {
         RELEASE,
-        JIRA
+        JIRA,
+        COVID
     }
 
     enum class Services {
@@ -31,6 +32,7 @@ object Constant {
             - service name [inv, po, gr, payment, cn, dn, request, aggregate, common]
         usage: release [service name]
         example: release inv
+        
     2. jira: Track information of target story
         argument: 
             - Target story: BLOC-XXX
@@ -40,6 +42,9 @@ object Constant {
         usage: jira [story] [tag(optional)]
         example: jira BLOC-13500 status
         show information example: jira BLOC-13500 
+
+    3. covid: Show updated covid information in Thailand
+    
     """
 
     const val ASSIGNEE = "[ASSIGNEE]"
