@@ -34,7 +34,7 @@ class GoldFlexMessage(val goldService: GoldService): Supplier<FlexMessage> {
                 key = "Silver",
                 image = "https://www.prachachat.net/wp-content/uploads/2020/11/%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%AD%E0%B8%9A%E0%B8%82%E0%B9%88%E0%B8%B2%E0%B8%A7%E0%B9%82%E0%B8%A5%E0%B8%AB%E0%B8%B0%E0%B9%80%E0%B8%87%E0%B8%B4%E0%B8%99-Silver-Silver-Bar.jpg"),
         DOLLAR(
-                key = "THB",
+                key = "US dollar",
                 image = "https://www.advisor.ca/wp-content/uploads/sites/5/2018/08/800x600_money_US_earnings_41427604_123RFStockPhoto.jpg")
     }
     /**
