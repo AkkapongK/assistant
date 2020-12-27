@@ -56,10 +56,8 @@ class GoldFlexMessage(val goldService: GoldService): Supplier<FlexMessage> {
      */
     private fun GoldUpdatedModel.getUpdated(): String {
         if (this.bid.isNullOrEmpty()) return ""
-        val date = Instant.ofEpochMilli(this.bid!!.toLong() * 1000).stringify()
-        val time = this.ask ?: ""
+        return Instant.ofEpochMilli(this.bid!!.toLong() * 1000).stringify()
 
-        return "$date $time"
     }
 
 

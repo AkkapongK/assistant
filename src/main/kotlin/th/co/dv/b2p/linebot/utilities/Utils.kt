@@ -1,6 +1,5 @@
 package th.co.dv.b2p.linebot.utilities
 
-import com.google.common.base.Enums
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -9,7 +8,7 @@ import java.time.format.DateTimeFormatter
 object Utils {
 
     /** Date format constants**/
-    const val DATE_FORMAT = "dd/MM/yyyy"
+    const val DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm"
 
 
 
@@ -44,13 +43,13 @@ object Utils {
     }
 
     /** Date serialisation. */
-    fun ZonedDateTime.stringify(pattern: String = DATE_FORMAT): String {
+    fun ZonedDateTime.stringify(pattern: String = DATE_TIME_FORMAT): String {
         val datetimeFormatter = DateTimeFormatter.ofPattern(pattern)
         return datetimeFormatter.format(this)
     }
 
     /** Instant to String conversion. */
-    fun Instant.stringify(pattern: String = DATE_FORMAT): String {
+    fun Instant.stringify(pattern: String = DATE_TIME_FORMAT): String {
         val zoneId = ZoneId.of("Asia/Bangkok").id
         return this.toZonedDateTime(zoneId).stringify(pattern)
     }
