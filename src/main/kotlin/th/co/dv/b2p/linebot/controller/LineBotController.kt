@@ -73,7 +73,7 @@ class LineBotController {
 
 
         when (command) {
-            Constant.Command.RELEASE -> findReleaseForService(replyToken, arg)
+//            Constant.Command.RELEASE -> findReleaseForService(replyToken, arg)
 //            Constant.Command.JIRA -> processJira(replyToken, arg)
             Constant.Command.JIRA -> this.replyJiraFlexMessage(replyToken, arg)
             Constant.Command.COVID -> this.replyCovidFlexMessage(replyToken)
