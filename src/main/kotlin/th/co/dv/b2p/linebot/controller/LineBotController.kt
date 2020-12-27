@@ -72,7 +72,10 @@ class LineBotController {
         val userId = event.source.userId
         logger.info("Got text message from $userId => $replyToken : $text")
         val arg = text.toArgument()
-        val command = getEnumIgnoreCase<Constant.Command>(arg.removeAt(0))
+        val argCommand = arg.removeAt(0)
+        val command = Constant.Command.values().firstOrNull {
+            argCommand in it.key
+        }
         logger.info("Command: $command")
 
 

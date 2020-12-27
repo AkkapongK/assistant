@@ -2,11 +2,11 @@ package th.co.dv.b2p.linebot.constant
 
 object Constant {
 
-    enum class Command {
-        RELEASE,
-        JIRA,
-        COVID,
-        GOLD
+    enum class Command(val key: List<String>) {
+        RELEASE(listOf("release")),
+        JIRA(listOf("jira")),
+        COVID(listOf("covid", "โควิด")),
+        GOLD(listOf("gold", "ทอง"))
     }
 
     enum class Services {
@@ -45,6 +45,8 @@ object Constant {
         show information example: jira BLOC-13500 
 
     3. covid: Show updated covid information in Thailand
+    
+    4. gold: Show updated gold, THB and silver price
     
     """
 
