@@ -30,6 +30,7 @@ import th.co.dv.b2p.linebot.constant.Constant.REPORTER
 import th.co.dv.b2p.linebot.constant.Constant.STATUS
 import th.co.dv.b2p.linebot.constant.Constant.STORY
 import th.co.dv.b2p.linebot.services.CovidService
+import th.co.dv.b2p.linebot.services.GoldService
 import th.co.dv.b2p.linebot.utilities.Utils.getEnumIgnoreCase
 import java.io.IOException
 import java.util.concurrent.ExecutionException
@@ -42,6 +43,9 @@ class LineBotController {
 
     @Autowired
     lateinit var covidService: CovidService
+
+    @Autowired
+    lateinit var goldService: GoldService
 
     @Autowired
     lateinit var lineMessagingClient: LineMessagingClient
@@ -77,6 +81,7 @@ class LineBotController {
 //            Constant.Command.JIRA -> processJira(replyToken, arg)
             Constant.Command.JIRA -> this.replyJiraFlexMessage(replyToken, arg)
             Constant.Command.COVID -> this.replyCovidFlexMessage(replyToken)
+            Constant.Command.GOLD -> this.replyGoldFlexMessage(replyToken)
             else -> this.replyText(replyToken, HELP)
         }
     }
@@ -262,6 +267,14 @@ class LineBotController {
     private fun replyCovidFlexMessage(replyToken: String) {
         this.reply(replyToken, CovidFlexMessage(covidService).get())
     }
+
+    /**
+     * Method for reply Glod message
+     */
+    private fun replyGoldFlexMessage(replyToken: String) {
+        this.reply(replyToken, GoldFlexMessage(goldService).get())
+    }
+
 
     /**
      * Method for reply Flex message

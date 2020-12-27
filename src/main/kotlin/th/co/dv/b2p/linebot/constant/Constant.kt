@@ -5,7 +5,8 @@ object Constant {
     enum class Command {
         RELEASE,
         JIRA,
-        COVID
+        COVID,
+        GOLD
     }
 
     enum class Services {
