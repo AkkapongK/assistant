@@ -24,10 +24,14 @@ class GoldFlexMessage(val goldService: GoldService): Supplier<FlexMessage> {
                 key = "Update",
                 image = ""
         ),
+        GOLD_96(
+                key = "96.5%",
+                image = "https://responsive.fxempire.com/v7/_fxempire_/2016/01/gold-stack-forexwords.jpg?func=cover&q70&width=615"
+        ),
         GOLD_SPOT(
                 key = "GoldSpot",
                 image = "https://i1.wp.com/www.goldaround.com/wp-content/uploads/2020/02/gold_%E0%B8%A3%E0%B8%B2%E0%B8%84%E0%B8%B2%E0%B8%97%E0%B8%AD%E0%B8%87%E0%B8%84%E0%B8%B3_pic_051.jpg?w=700&ssl=1"),
-        GOLD(
+        GOLD_99(
                 key = "99.99%",
                 image = "https://www.mitihoon.com/wp-content/uploads/2020/08/Gold-bullion-bullion-Gold-bar-shut.jpg"),
         SILVER(
@@ -66,15 +70,17 @@ class GoldFlexMessage(val goldService: GoldService): Supplier<FlexMessage> {
         val allItems = getUpdatedItems()
 
         val updateDateTime = allItems.findByMode(Mode.UPDATE).getUpdated()
+        val gold96Result = createBubble(allItems, Mode.GOLD_96, updateDateTime)
         val goldSpotResult = createBubble(allItems, Mode.GOLD_SPOT, updateDateTime)
-        val goldResult = createBubble(allItems, Mode.GOLD, updateDateTime)
+        val gold99Result = createBubble(allItems, Mode.GOLD_99, updateDateTime)
         val thbResult = createBubble(allItems, Mode.THB, updateDateTime)
         val silverResult = createBubble(allItems, Mode.SILVER, updateDateTime)
 
         val carousel = Carousel.builder()
                 .contents(listOf(
+                        gold96Result,
                         goldSpotResult,
-                        goldResult,
+                        gold99Result,
                         thbResult,
                         silverResult))
                 .build()
