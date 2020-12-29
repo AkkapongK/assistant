@@ -13,6 +13,7 @@ import com.linecorp.bot.model.message.flex.unit.FlexLayout
 import com.linecorp.bot.model.message.flex.unit.FlexMarginSize
 import com.lordcodes.turtle.shellRun
 import th.co.dv.b2p.linebot.constant.Constant
+import th.co.dv.b2p.linebot.constant.Constant.UNASSIGN
 import java.util.function.Supplier
 
 class JiraFlexMessage(private val story: String) : Supplier<FlexMessage> {
@@ -46,25 +47,29 @@ class JiraFlexMessage(private val story: String) : Supplier<FlexMessage> {
     /**
      * Get assignee
      */
-    private fun JsonNode.getAssignee() = this.get("assignee").get("displayName").toString().replace("\"", "")
+    private fun JsonNode.getAssignee() = this.get("assignee").get("displayName")?.toString()?.replace("\"", "") ?: UNASSIGN
     /**
      * Get developer
      */
-    private fun JsonNode.getDeveloper() = this.get(Constant.DEVELOPER_TAG).get("displayName").toString().replace("\"", "")
+    private fun JsonNode.getDeveloper() = this.get(Constant.DEVELOPER_TAG).get("displayName")?.toString()?.replace("\"", "")  ?: UNASSIGN
     /**
      * Get reporter
      */
-    private fun JsonNode.getReport() = this.get("creator").get("displayName").toString().replace("\"", "")
+    private fun JsonNode.getReport() = this.get("creator").get("displayName")?.toString()?.replace("\"", "")  ?: UNASSIGN
     /**
      * Get reporter
      */
-    private fun JsonNode.getComponents() = this.get("components").map {
-        it.get("name").toString().replace("\"", "")
-    }.joinToString()
+    private fun JsonNode.getComponents() : String{
+        val components = this.get("components").mapNotNull {
+            it.get("name").toString().replace("\"", "")
+        }
+
+        return if (components.isNotEmpty()) components.joinToString() else UNASSIGN
+    }
     /**
      * Get Title
      */
-    private fun JsonNode.getTitle() = this.get("summary").toString().replace("\"", "")
+    private fun JsonNode.getTitle() = this.get("summary")?.toString()?.replace("\"", "") ?: UNASSIGN
 
     /**
      * Method to get get assignee
@@ -91,10 +96,10 @@ class JiraFlexMessage(private val story: String) : Supplier<FlexMessage> {
 
         val fixVersions = this.get("fixVersions")
 
-        val versions = fixVersions.map {
-            it.get("name").toString().replace("\"", "")
+        val versions = fixVersions.mapNotNull {
+            it.get("name")?.toString()?.replace("\"", "")
         }
-        return versions.joinToString()
+        return if (versions.isNotEmpty()) versions.joinToString() else UNASSIGN
     }
 
     /**
@@ -187,6 +192,7 @@ class JiraFlexMessage(private val story: String) : Supplier<FlexMessage> {
                         Text.builder().text(desc)
                                 .wrap(true)
                                 .weight(Text.TextWeight.REGULAR)
+                                .margin(FlexMarginSize.SM)
                                 .color(descColor)
                                 .size(descSize)
                                 .flex(0)
@@ -207,13 +213,13 @@ class JiraFlexMessage(private val story: String) : Supplier<FlexMessage> {
                 .weight(Text.TextWeight.BOLD)
                 .size(FlexFontSize.XL).build()
 
-        val assigneeBlock = createBlock("Assignee: ", assignee)
-        val developerBlock = createBlock("Developer: ", developer)
-        val reporterBlock = createBlock("Reporter: ", reporter)
-        val fixVersionBlock = createBlock("Fix versions: ", fixVersion, "#5555E2", "#6666CC")
-        val statusBlock = createBlock("Status: ", status, "#17A62A", "#5FD26E")
+        val assigneeBlock = createBlock("Assignee :", assignee)
+        val developerBlock = createBlock("Developer :", developer)
+        val reporterBlock = createBlock("Reporter :", reporter)
+        val fixVersionBlock = createBlock("Fix versions :", fixVersion, "#5555E2", "#6666CC")
+        val statusBlock = createBlock("Status :", status, "#17A62A", "#5FD26E")
         val componentBlock = createBlock(
-                label = "Components: ",
+                label = "Components :",
                 desc = components,
                 labelColor = "#EC9B21",
                 descColor = "#F3C073",

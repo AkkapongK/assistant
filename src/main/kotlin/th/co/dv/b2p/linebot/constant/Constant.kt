@@ -80,4 +80,5 @@ object Constant {
     """
 
     const val DEVELOPER_TAG = "customfield_10100"
+    const val UNASSIGN = "UNASSIGN"
 }
