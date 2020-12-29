@@ -26,9 +26,11 @@ import th.co.dv.b2p.linebot.constant.Constant.DEVELOPER_TAG
 import th.co.dv.b2p.linebot.constant.Constant.FIXVERSION
 import th.co.dv.b2p.linebot.constant.Constant.HELP
 import th.co.dv.b2p.linebot.constant.Constant.INFORMATION
+import th.co.dv.b2p.linebot.constant.Constant.PREFIX_SYMBOL
 import th.co.dv.b2p.linebot.constant.Constant.REPORTER
 import th.co.dv.b2p.linebot.constant.Constant.STATUS
 import th.co.dv.b2p.linebot.constant.Constant.STORY
+import th.co.dv.b2p.linebot.services.BitCoinService
 import th.co.dv.b2p.linebot.services.CovidService
 import th.co.dv.b2p.linebot.services.GoldService
 import th.co.dv.b2p.linebot.utilities.Utils.getEnumIgnoreCase
@@ -48,11 +50,12 @@ class LineBotController {
     lateinit var goldService: GoldService
 
     @Autowired
+    lateinit var bitCoinService: BitCoinService
+
+    @Autowired
     lateinit var lineMessagingClient: LineMessagingClient
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
-
-    private val mapper = jacksonObjectMapper()
 
     @EventMapping
     fun handleTextMessage(event: MessageEvent<TextMessageContent>) {
@@ -81,108 +84,33 @@ class LineBotController {
 
         when (command) {
 //            Constant.Command.RELEASE -> findReleaseForService(replyToken, arg)
-//            Constant.Command.JIRA -> processJira(replyToken, arg)
             Constant.Command.JIRA -> this.replyJiraFlexMessage(replyToken, arg)
             Constant.Command.COVID -> this.replyCovidFlexMessage(replyToken)
             Constant.Command.GOLD -> this.replyGoldFlexMessage(replyToken)
+            Constant.Command.BITCOIN -> processBitcoin(replyToken, arg)
             else -> this.replyText(replyToken, HELP)
         }
     }
 
     /**
-     * Method for process jira
+     * Method to process bitcoin
      */
-    private fun processJira(replyToken: String, arg: MutableList<String>) {
-        val bloc = arg.removeAt(0)
-        val tag = if (arg.size >= 1) arg.removeAt(0) else ""
-        val response = shellRun(Constant.Curl.command, listOf(
-                jiraUrl+bloc,
-                "--user",
-                "akkapong.k@dv.co.th:UgBUFfAzLelbbNQv4UHlDA55"))
+    private fun processBitcoin(replyToken: String, arg: MutableList<String>) {
 
-        val node = mapper.readTree(response)
+        when (arg.isEmpty()) {
+            true -> {
+                var output = """"""
+                // Show available list
+                bitCoinService.getAvailable().forEach {
+                    if (output.isNotEmpty()) {
+                        output += "\r\n"
+                    }
+                    output += it.symbol?.replace(PREFIX_SYMBOL, "")
+                }
 
-        val output = getInformationFromStory(node, bloc, tag) ?: TAG_NOT_FOUND
-        this.replyText(replyToken, output)
-    }
-
-    /**
-     * Get assignee
-     */
-    private fun JsonNode.getAssignee() = this.get("assignee").get("displayName").toString()
-    /**
-     * Get developer
-     */
-    private fun JsonNode.getDeveloper() = this.get(DEVELOPER_TAG).get("displayName").toString()
-    /**
-     * Get reporter
-     */
-    private fun JsonNode.getReport() = this.get("creator").get("displayName").toString()
-    /**
-     * Get reporter
-     */
-    private fun JsonNode.getComponents() = this.get("components").map {
-        it.get("name").toString().replace("\"", "")
-    }.joinToString()
-
-    /**
-     * Method to get get assignee
-     *
-     */
-    private fun JsonNode.getInformation(bloc: String): String {
-        val issue = this.get("issues").first()
-        val fields = issue.get("fields")
-        val assignee = fields.getAssignee()
-        val developer = fields.getDeveloper()
-        val reporter = fields.getReport()
-        val components = fields.getComponents()
-        val fixVersions = fields.getFixVersion()
-        val status = fields.getStatus()
-
-        return INFORMATION
-                .replace(ASSIGNEE, assignee)
-                .replace(DEVELOPER, developer)
-                .replace(REPORTER, reporter)
-                .replace(STORY, bloc)
-                .replace(COMPONENT, components)
-                .replace(FIXVERSION, fixVersions)
-                .replace(STATUS, status)
-    }
-
-    /**
-     * Method to get getFixVersion
-     *
-     */
-    private fun JsonNode.getFixVersion(): String {
-
-        val fixVersions = this.get("fixVersions")
-
-        val versions = fixVersions.map {
-            it.get("name").toString().replace("\"", "")
-        }
-        logger.info("getFixVersion versions : $versions")
-        return versions.joinToString()
-    }
-
-    /**
-     * Method to get getStatus
-     *
-     */
-    private fun JsonNode.getStatus(): String {
-        val status = this.get("status")
-        return status.get("name").toString().replace("\"", "")
-    }
-
-    /**
-     * get information from story
-     */
-    private fun getInformationFromStory(response: JsonNode, bloc: String, tag: String): String? {
-        val issue = response.get("issues").first()
-        val fields = issue.get("fields")
-        return when (tag.toLowerCase()) {
-            "fixversions" -> fields.getFixVersion()
-            "status" -> fields.getStatus()
-            else -> response.getInformation(bloc)
+                this.replyText(replyToken, output)
+            }
+            false -> this.replyBitCoinFlexMessage(replyToken, arg.first())
         }
     }
 
@@ -272,10 +200,18 @@ class LineBotController {
     }
 
     /**
-     * Method for reply Glod message
+     * Method for reply Gold message
      */
     private fun replyGoldFlexMessage(replyToken: String) {
         this.reply(replyToken, GoldFlexMessage(goldService).get())
+    }
+
+    /**
+     * Method for reply Bitcoin message
+     */
+    private fun replyBitCoinFlexMessage(replyToken: String, symbol: String) {
+        val finalSymbol = PREFIX_SYMBOL + symbol.toUpperCase()
+        this.reply(replyToken, BitCoinFlexMessage(bitCoinService, finalSymbol).get())
     }
 
 

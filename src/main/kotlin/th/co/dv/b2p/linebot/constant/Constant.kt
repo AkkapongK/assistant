@@ -2,11 +2,13 @@ package th.co.dv.b2p.linebot.constant
 
 object Constant {
 
+    const val PREFIX_SYMBOL = "THB_"
     enum class Command(val key: List<String>) {
         RELEASE(listOf("release")),
         JIRA(listOf("jira")),
         COVID(listOf("covid", "โควิด")),
-        GOLD(listOf("gold", "ทอง"))
+        GOLD(listOf("gold", "ทอง")),
+        BITCOIN(listOf("bitcoin", "บิทคอยน์"))
     }
 
     enum class Services {
@@ -47,6 +49,13 @@ object Constant {
     3. covid: Show updated covid information in Thailand
     
     4. gold: Show updated gold, THB and silver price
+    
+    5. bitcoin: Show Bitcoin information
+        argument: 
+            - Target symbol : THB_BTC
+            
+        usage 1 : bitcoin => Show available symbol 
+        usage 2 : bitcoin [symbol] => Show symbol information
     
     """
 
