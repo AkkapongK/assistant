@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import th.co.dv.b2p.linebot.config.GitConfig
 import th.co.dv.b2p.linebot.constant.*
-import th.co.dv.b2p.linebot.constant.Constant.HELP
 import th.co.dv.b2p.linebot.constant.Constant.PREFIX_SYMBOL
 import th.co.dv.b2p.linebot.services.BitCoinService
 import th.co.dv.b2p.linebot.services.CovidService
@@ -75,13 +74,13 @@ class LineBotController {
 
 
         when (command) {
-//            Constant.Command.RELEASE -> findReleaseForService(replyToken, arg)
+            Constant.Command.RELEASE -> findReleaseForService(replyToken, arg)
             Constant.Command.JIRA -> this.replyJiraFlexMessage(replyToken, arg)
             Constant.Command.COVID -> this.replyCovidFlexMessage(replyToken)
             Constant.Command.GOLD -> this.replyGoldFlexMessage(replyToken)
             Constant.Command.BITCOIN -> processBitcoin(replyToken, arg)
             Constant.Command.PLAN -> processReleasePlan(replyToken, arg)
-            else -> this.replyText(replyToken, HELP)
+            else -> this.replyHelpFlexMessage(replyToken)
         }
     }
 
@@ -231,6 +230,13 @@ class LineBotController {
         this.reply(replyToken, BitCoinFlexMessage(bitCoinService, finalSymbol).get())
     }
 
+    /**
+     * Method for reply ็ำสย message
+     */
+    private fun replyHelpFlexMessage(replyToken: String) {
+        val helpFlexMessage = HelpFlexMessage()
+        this.reply(replyToken, helpFlexMessage.get())
+    }
 
     /**
      * Method for reply Flex message

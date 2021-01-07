@@ -29,42 +29,6 @@ object Constant {
         const val jiraUrl = "https://scb-digitalventures.atlassian.net/rest/api/3/search?jql=issue="
     }
 
-    const val HELP = """
-    Command that supported
-    1. release: get current release branch in git
-        argument:   
-            - service name [inv, po, gr, payment, cn, dn, request, aggregate, common]
-        usage: release [service name]
-        example: release inv
-        
-    2. jira: Track information of target story
-        argument: 
-            - Target story: BLOC-XXX
-            - Tatget tag: 
-                - fixversions : release branch that merge
-                - status : current status
-        usage: jira [story] [tag(optional)]
-        example: jira BLOC-13500 status
-        show information example: jira BLOC-13500 
-
-    3. covid: Show updated covid information in Thailand
-    
-    4. gold: Show updated gold, THB and silver price
-    
-    5. bitcoin: Show Bitcoin information
-        argument: 
-            - Target symbol : THB_BTC
-            
-        usage 1 : bitcoin => Show available symbol 
-        usage 2 : bitcoin [symbol] => Show symbol information
-    
-    6. plan: Show start date(expected) for each environment
-        argument:
-            - Project: b2p
-            - Environment: pdt, mgt, sit, uat, qa, deploy
-            - Target release: 9.2.3 (optional)
-            
-    """
     const val ASSIGNEE = "[ASSIGNEE]"
     const val DEVELOPER = "[DEVELOPER]"
     const val REPORTER = "[REPORTER]"
