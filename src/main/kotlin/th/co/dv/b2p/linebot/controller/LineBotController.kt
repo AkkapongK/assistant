@@ -1,7 +1,5 @@
 package th.co.dv.b2p.linebot.controller
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.linecorp.bot.client.LineMessagingClient
 import com.linecorp.bot.model.ReplyMessage
 import com.linecorp.bot.model.event.Event
@@ -18,20 +16,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import th.co.dv.b2p.linebot.config.GitConfig
 import th.co.dv.b2p.linebot.constant.*
-import th.co.dv.b2p.linebot.constant.Constant.ASSIGNEE
-import th.co.dv.b2p.linebot.constant.Constant.COMPONENT
-import th.co.dv.b2p.linebot.constant.Constant.Curl.jiraUrl
-import th.co.dv.b2p.linebot.constant.Constant.DEVELOPER
-import th.co.dv.b2p.linebot.constant.Constant.DEVELOPER_TAG
-import th.co.dv.b2p.linebot.constant.Constant.FIXVERSION
 import th.co.dv.b2p.linebot.constant.Constant.HELP
-import th.co.dv.b2p.linebot.constant.Constant.INFORMATION
 import th.co.dv.b2p.linebot.constant.Constant.PREFIX_SYMBOL
-import th.co.dv.b2p.linebot.constant.Constant.REPORTER
-import th.co.dv.b2p.linebot.constant.Constant.STATUS
-import th.co.dv.b2p.linebot.constant.Constant.STORY
 import th.co.dv.b2p.linebot.services.BitCoinService
 import th.co.dv.b2p.linebot.services.CovidService
+import th.co.dv.b2p.linebot.services.ExcelService
 import th.co.dv.b2p.linebot.services.GoldService
 import th.co.dv.b2p.linebot.utilities.Utils.getEnumIgnoreCase
 import java.io.IOException
@@ -51,6 +40,9 @@ class LineBotController {
 
     @Autowired
     lateinit var bitCoinService: BitCoinService
+
+    @Autowired
+    lateinit var excelService: ExcelService
 
     @Autowired
     lateinit var lineMessagingClient: LineMessagingClient
@@ -88,6 +80,7 @@ class LineBotController {
             Constant.Command.COVID -> this.replyCovidFlexMessage(replyToken)
             Constant.Command.GOLD -> this.replyGoldFlexMessage(replyToken)
             Constant.Command.BITCOIN -> processBitcoin(replyToken, arg)
+            Constant.Command.PLAN -> processReleasePlan(replyToken, arg)
             else -> this.replyText(replyToken, HELP)
         }
     }
@@ -111,6 +104,30 @@ class LineBotController {
                 this.replyText(replyToken, output)
             }
             false -> this.replyBitCoinFlexMessage(replyToken, arg.first())
+        }
+    }
+
+    /**
+     * Method to process release plan
+     */
+    private fun processReleasePlan(replyToken: String, arg: MutableList<String>) {
+
+        when (arg.isNotEmpty()) {
+            true -> {
+                val list = excelService.getReleasePlan(arg)
+                list?.let {
+                    var output = """"""
+                    it.forEach { each ->
+                        if (output.isNotEmpty()) {
+                            output += "\r\n"
+                        }
+                        output += each
+                    }
+                    if (output.isEmpty()) output = NOT_ASSIGN
+                    this.replyText(replyToken, output)
+                }
+            }
+            false -> this.replyText(replyToken, PROJECT_NOT_FOUND)
         }
     }
 
@@ -166,7 +183,7 @@ class LineBotController {
         }
         val pathDirectory = (gitConfig.directory?: "") + folder
         val response =  runCommand(pathDirectory)
-        val result = if (response.isNullOrEmpty()) UNKNOW else response!!
+        val result = if (response.isNullOrEmpty()) UNKNOWN else response!!
         logger.info("Return result message: $result")
         this.replyText(replyToken, result)
     }

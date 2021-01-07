@@ -8,7 +8,8 @@ object Constant {
         JIRA(listOf("jira")),
         COVID(listOf("covid", "โควิด")),
         GOLD(listOf("gold", "ทอง")),
-        BITCOIN(listOf("bitcoin", "บิทคอยน์"))
+        BITCOIN(listOf("bitcoin", "บิทคอยน์")),
+        PLAN(listOf("plan"))
     }
 
     enum class Services {
@@ -57,8 +58,13 @@ object Constant {
         usage 1 : bitcoin => Show available symbol 
         usage 2 : bitcoin [symbol] => Show symbol information
     
+    6. plan: Show start date(expected) for each environment
+        argument:
+            - Project: b2p
+            - Environment: pdt, mgt, sit, uat, qa, deploy
+            - Target release: 9.2.3 (optional)
+            
     """
-
     const val ASSIGNEE = "[ASSIGNEE]"
     const val DEVELOPER = "[DEVELOPER]"
     const val REPORTER = "[REPORTER]"

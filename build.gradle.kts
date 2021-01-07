@@ -49,6 +49,8 @@ dependencies {
 	}
 	implementation("com.linecorp.bot:line-bot-spring-boot:1.20.0")
 	implementation("com.lordcodes.turtle:turtle:0.2.0")
+	implementation("org.apache.poi:poi-ooxml:3.17")
+	implementation("commons-io:commons-io:2.4")
 
 	implementation("com.natpryce:konfig:${property("konfigVersion")}")
 }
