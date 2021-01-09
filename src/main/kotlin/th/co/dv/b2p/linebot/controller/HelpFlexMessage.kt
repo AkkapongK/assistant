@@ -25,8 +25,11 @@ class HelpFlexMessage : Supplier<FlexMessage> {
                 image = "https://marketplacelive.blob.core.windows.net/solution-logo/47dda901f2fa40c1a9c983b1a352e8fb.png",
                 description = "Track information of target story",
                 args = listOf(
-                        "Target story: BLOC-XXX"),
-                usages = listOf("jira bloc-16000: Show information of bloc 16000")),
+                        "Mode: story or sprint",
+                        "Value: bloc-xxx for story or b2p-xx for sprint"),
+                usages = listOf(
+                        "jira story bloc-16000: Show information of bloc 16000",
+                        "jira sprint b2p-60: Show information of sprint 60")),
         COVID(
                 image = "https://d18lkz4dllo6v2.cloudfront.net/cumulus_uploads/entry/2020-04-01/COVID%20Getty%20Image.jpg?w=660",
                 description = "Show updated covid information in Thailand"),
@@ -72,7 +75,7 @@ class HelpFlexMessage : Supplier<FlexMessage> {
                         goldBubble,
                         planBubble))
                 .build()
-        return FlexMessage("Gold updated information", carousel)
+        return FlexMessage("Document information", carousel)
     }
 
     private fun createBubble(mode: Document): Bubble {

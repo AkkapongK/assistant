@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import th.co.dv.b2p.linebot.config.GitConfig
 import th.co.dv.b2p.linebot.constant.*
 import th.co.dv.b2p.linebot.constant.Constant.PREFIX_SYMBOL
-import th.co.dv.b2p.linebot.services.BitCoinService
-import th.co.dv.b2p.linebot.services.CovidService
-import th.co.dv.b2p.linebot.services.ExcelService
-import th.co.dv.b2p.linebot.services.GoldService
+import th.co.dv.b2p.linebot.services.*
 import th.co.dv.b2p.linebot.utilities.Utils.getEnumIgnoreCase
 import java.io.IOException
 import java.util.concurrent.ExecutionException
@@ -36,6 +33,9 @@ class LineBotController {
 
     @Autowired
     lateinit var goldService: GoldService
+
+    @Autowired
+    lateinit var jiraService: JiraService
 
     @Autowired
     lateinit var bitCoinService: BitCoinService
@@ -75,7 +75,7 @@ class LineBotController {
 
         when (command) {
             Constant.Command.RELEASE -> findReleaseForService(replyToken, arg)
-            Constant.Command.JIRA -> this.replyJiraFlexMessage(replyToken, arg)
+            Constant.Command.JIRA -> replyJiraFlexMessage(replyToken, arg)
             Constant.Command.COVID -> this.replyCovidFlexMessage(replyToken)
             Constant.Command.GOLD -> this.replyGoldFlexMessage(replyToken)
             Constant.Command.BITCOIN -> processBitcoin(replyToken, arg)
@@ -242,9 +242,23 @@ class LineBotController {
      * Method for reply Flex message
      */
     private fun replyJiraFlexMessage(replyToken: String, arg: List<String>) {
-        val story = arg.firstOrNull() ?: this.replyText(replyToken, STORY_NOT_FOUND)
-        val jiraFlexMessage = JiraFlexMessage(story.toString())
-        this.reply(replyToken, jiraFlexMessage.get())
+        val mode = arg.firstOrNull() ?: this.replyText(replyToken, JIRA_MODE_NOT_FOUND)
+        val value = arg.getOrNull(1) ?: this.replyText(replyToken, JIRA_VALUE_NOT_FOUND)
+        when (mode.toString().toLowerCase() == "sprint") {
+            true -> {
+                // Get sprint data
+                val data = jiraService.getInformation(JiraService.Mode.SPRINT, value.toString())
+
+                val jiraStoryFlexMessage = JiraSprintFlexMessage(data)
+                this.reply(replyToken, jiraStoryFlexMessage.get())
+            }
+            false -> {
+                // TODO: need to fixed in same way with story mode
+                val jiraFlexMessage = JiraFlexMessage(value.toString())
+                this.reply(replyToken, jiraFlexMessage.get())
+            }
+        }
+
     }
 
     /**
