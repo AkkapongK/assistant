@@ -2,7 +2,6 @@ package th.co.dv.b2p.linebot.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
-import sun.awt.EventListenerAggregate
 
 @Component
 @ConfigurationProperties("git")

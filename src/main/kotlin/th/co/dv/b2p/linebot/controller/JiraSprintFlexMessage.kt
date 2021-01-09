@@ -98,8 +98,8 @@ class JiraSprintFlexMessage(val data: List<IssueJiraModel>): Supplier<FlexMessag
             desc: String,
             labelColor: String = "#706C6C",
             descColor: String = "#979494",
-            labelSize: FlexFontSize = FlexFontSize.Md,
-            descSize: FlexFontSize = FlexFontSize.SM) : Box {
+            labelSize: FlexFontSize = FlexFontSize.SM,
+            descSize: FlexFontSize = FlexFontSize.XS) : Box {
         return Box.builder()
                 .layout(FlexLayout.BASELINE)
                 .contents(listOf(

@@ -253,9 +253,15 @@ class LineBotController {
                 this.reply(replyToken, jiraStoryFlexMessage.get())
             }
             false -> {
-                // TODO: need to fixed in same way with story mode
-                val jiraFlexMessage = JiraFlexMessage(value.toString())
-                this.reply(replyToken, jiraFlexMessage.get())
+                val data = jiraService.getInformation(JiraService.Mode.ISSUE, value.toString())
+                when (data.isEmpty()) {
+                    true -> this.replyText(replyToken, JIRA_BLOC_NOT_FOUND)
+                    false -> {
+                        val jiraStoryFlexMessage = JiraStoryFlexMessage(data.first())
+                        this.reply(replyToken, jiraStoryFlexMessage.get())
+                    }
+                }
+
             }
         }
 

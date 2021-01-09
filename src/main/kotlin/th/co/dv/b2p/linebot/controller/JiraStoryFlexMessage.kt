@@ -1,126 +1,22 @@
 package th.co.dv.b2p.linebot.controller
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.linecorp.bot.model.action.URIAction
 import com.linecorp.bot.model.message.FlexMessage
 import com.linecorp.bot.model.message.flex.component.*
 import com.linecorp.bot.model.message.flex.container.Bubble
 import com.linecorp.bot.model.message.flex.container.Carousel
 import com.linecorp.bot.model.message.flex.unit.FlexFontSize
-import com.linecorp.bot.model.message.flex.unit.FlexGravity
 import com.linecorp.bot.model.message.flex.unit.FlexLayout
 import com.linecorp.bot.model.message.flex.unit.FlexMarginSize
-import com.lordcodes.turtle.shellRun
-import th.co.dv.b2p.linebot.constant.Constant
 import th.co.dv.b2p.linebot.constant.Constant.UNASSIGN
+import th.co.dv.b2p.linebot.model.IssueJiraModel
 import java.util.function.Supplier
 
-class JiraFlexMessage(private val story: String) : Supplier<FlexMessage> {
-
-    private val mapper = jacksonObjectMapper()
-
-    lateinit var assignee: String
-    lateinit var developer: String
-    lateinit var reporter: String
-    lateinit var status: String
-    lateinit var fixVersions: String
-    lateinit var components: String
-    lateinit var title: String
-    lateinit var link: String
+class JiraStoryFlexMessage(val data: IssueJiraModel) : Supplier<FlexMessage> {
 
     private val image = "https://marketplacelive.blob.core.windows.net/solution-logo/47dda901f2fa40c1a9c983b1a352e8fb.png"
-    /**
-     * Method for process jira
-     */
-    private fun processJira() {
-        val response = shellRun(Constant.Curl.command, listOf(
-                Constant.Curl.jiraUrl + story,
-                "--user",
-                "akkapong.k@dv.co.th:UgBUFfAzLelbbNQv4UHlDA55"))
-
-        val node = mapper.readTree(response)
-
-        getInformationFromStory(node, story)
-    }
-
-    /**
-     * Get assignee
-     */
-    private fun JsonNode.getAssignee() = this.get("assignee").get("displayName")?.toString()?.replace("\"", "") ?: UNASSIGN
-    /**
-     * Get developer
-     */
-    private fun JsonNode.getDeveloper() = this.get(Constant.DEVELOPER_TAG).get("displayName")?.toString()?.replace("\"", "")  ?: UNASSIGN
-    /**
-     * Get reporter
-     */
-    private fun JsonNode.getReport() = this.get("creator").get("displayName")?.toString()?.replace("\"", "")  ?: UNASSIGN
-    /**
-     * Get reporter
-     */
-    private fun JsonNode.getComponents() : String{
-        val components = this.get("components").mapNotNull {
-            it.get("name").toString().replace("\"", "")
-        }
-
-        return if (components.isNotEmpty()) components.joinToString() else UNASSIGN
-    }
-    /**
-     * Get Title
-     */
-    private fun JsonNode.getTitle() = this.get("summary")?.toString()?.replace("\"", "") ?: UNASSIGN
-
-    /**
-     * Method to get get assignee
-     *
-     */
-    private fun JsonNode.getInformation(bloc: String) {
-        val issue = this.get("issues").first()
-        val fields = issue.get("fields")
-        assignee = fields.getAssignee()
-        developer = fields.getDeveloper()
-        reporter = fields.getReport()
-        components = fields.getComponents()
-        fixVersions = fields.getFixVersion()
-        status = fields.getStatus()
-        title = fields.getTitle()
-        link = "https://scb-digitalventures.atlassian.net/browse/$bloc"
-    }
-
-    /**
-     * Method to get getFixVersion
-     *
-     */
-    private fun JsonNode.getFixVersion(): String {
-
-        val fixVersions = this.get("fixVersions")
-
-        val versions = fixVersions.mapNotNull {
-            it.get("name")?.toString()?.replace("\"", "")
-        }
-        return if (versions.isNotEmpty()) versions.joinToString() else UNASSIGN
-    }
-
-    /**
-     * Method to get getStatus
-     *
-     */
-    private fun JsonNode.getStatus(): String {
-        val status = this.get("status")
-        return status.get("name").toString().replace("\"", "")
-    }
-
-    /**
-     * get information from story
-     */
-    private fun getInformationFromStory(response: JsonNode, bloc: String) {
-       response.getInformation(bloc)
-    }
 
     override fun get(): FlexMessage {
-
-        processJira()
 
         val jiraResult = createBubble()
         val carousel = Carousel.builder()
@@ -131,35 +27,21 @@ class JiraFlexMessage(private val story: String) : Supplier<FlexMessage> {
 
     private fun createBubble(): Bubble {
         val heroBlock = createHeroBlock(image)
+        val fixVersion = data.fields?.fixVersions?.mapNotNull { it.name }
+        val components = data.fields?.components?.mapNotNull { it.name }
         val bodyBlock = createBodyBlock(
-                title = title,
-                assignee = assignee,
-                developer = developer,
-                reporter = reporter,
-                fixVersion = fixVersions,
-                components = components,
-                status = status)
-        val footerBlock = createFooterBlock(link)
+                title = data.fields?.summary?: UNASSIGN,
+                assignee = data.fields?.assignee?.displayName ?: UNASSIGN,
+                developer = data.fields?.customfield_10100?.displayName ?: UNASSIGN,
+                reporter = data.fields?.creator?.displayName ?: UNASSIGN,
+                fixVersion = if (fixVersion == null || fixVersion.isEmpty()) UNASSIGN else fixVersion.joinToString(),
+                components = if (components == null || components.isEmpty()) UNASSIGN else components.joinToString(),
+                status = data.fields?.status?.name ?: UNASSIGN)
+        val footerBlock = createFooterBlock("https://scb-digitalventures.atlassian.net/browse/${data.key}")
         return Bubble.builder()
                 .hero(heroBlock)
                 .body(bodyBlock)
                 .footer(footerBlock)
-                .build()
-    }
-
-    private fun createSeeMoreBubble(): Bubble {
-        return Bubble.builder()
-                .body(Box.builder()
-                        .layout(FlexLayout.VERTICAL)
-                        .spacing(FlexMarginSize.SM)
-                        .contents(listOf(
-                                Button.builder()
-                                        .flex(1)
-                                        .gravity(FlexGravity.CENTER)
-                                        .action(URIAction("See more", "http://www.amazon.com"))
-                                        .build()
-                        )).build()
-                )
                 .build()
     }
 
@@ -226,14 +108,6 @@ class JiraFlexMessage(private val story: String) : Supplier<FlexMessage> {
                 labelSize = FlexFontSize.SM,
                 descSize = FlexFontSize.XS)
 
-//        val outOfStock = Text.builder()
-//                .text("Temporarily out of stock")
-//                .wrap(true)
-//                .size(FlexFontSize.XXS)
-//                .margin(FlexMarginSize.MD)
-//                .color("#FF5551")
-//                .build()
-//        println("----- 3 -----")
         val flexComponents = listOf<FlexComponent>(
                 titleBlock,
                 assigneeBlock,
