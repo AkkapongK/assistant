@@ -1,0 +1,37 @@
+image: docker:stable
+
+services:
+  - docker:dind
+variables:
+  GIT_SUBMODULE_STRATEGY: normal
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+
+stages:
+  - buildDocker
+
+before_script:
+  - echo `pwd` # debug
+  - echo "$CI_BUILD_NAME, $CI_BUILD_REF_NAME $CI_BUILD_STAGE" # debug
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+
+cache:
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+
+# ------------------------ BUILD DOCKER ------------------------
+buildDocker:
+  image: openjdk:8-jdk-alpine
+  stage: buildDocker
+  before_script:
+    - echo "CI_COMMIT_TAG = $CI_COMMIT_TAG"
+    - apk add docker
+    - docker login -u b2papp -p $ecrToken b2papp.azurecr.io
+    - echo b2papp.azurecr.io/b2p/linebot:$CI_COMMIT_TAG
+  script:
+    - ./gradlew clean assemble
+    - docker build -f ./docker/linebot/Dockerfile -t b2papp.azurecr.io/b2p/linebot:$CI_COMMIT_TAG .
+    - docker push b2papp.azurecr.io/b2p/linebot:$CI_COMMIT_TAG
+  only:
+    - tags
