@@ -10,6 +10,7 @@ import com.linecorp.bot.model.message.flex.container.Carousel
 import com.linecorp.bot.model.message.flex.unit.FlexFontSize
 import com.linecorp.bot.model.message.flex.unit.FlexLayout
 import com.linecorp.bot.model.message.flex.unit.FlexMarginSize
+import th.co.dv.b2p.linebot.utilities.Utils.convertToString
 import java.util.function.Supplier
 
 class HelpFlexMessage : Supplier<FlexMessage> {
@@ -18,7 +19,8 @@ class HelpFlexMessage : Supplier<FlexMessage> {
         RELEASE(
                 image = "https://miro.medium.com/max/600/1*XFYOE5-2A5WMHhBDPLgQiw.jpeg",
                 description = "Get current release branch in git",
-                args = listOf("service name:  inv, po, gr, payment, cn, dn, request, aggregate, common"),
+                args = listOf("service name:  inv, po, gr, payment, cn, dn, request, aggregate, common, " +
+                        "commonpuksa, commonirpc, commonscg, commonsnp, commonmint"),
                 usages = listOf("release inv: Show branch of invoice service")
         ),
         JIRA(
@@ -145,8 +147,8 @@ class HelpFlexMessage : Supplier<FlexMessage> {
                 titleBlock,
                 descBlock)
 
-        args?.let { flexComponents.add(createBlock("Args :", it.convertToString())) }
-        usage?.let { flexComponents.add(createBlock("Usages :", it.convertToString())) }
+        args?.let { flexComponents.add(createBlock("Args :", it.convertToString("*"))) }
+        usage?.let { flexComponents.add(createBlock("Usages :", it.convertToString("*"))) }
 
         val listComponent = flexComponents.toMutableList()
         return Box.builder()
@@ -155,15 +157,5 @@ class HelpFlexMessage : Supplier<FlexMessage> {
                 .contents(listComponent)
                 .build()
     }
-
-    private fun List<String>.convertToString(): String {
-        var output = """"""
-        this.forEach {
-            if (output.isNotEmpty()) output += "\r\n"
-            output += "* $it"
-        }
-        return output
-    }
-
 
 }

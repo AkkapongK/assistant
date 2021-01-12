@@ -71,8 +71,6 @@ class JiraSprintFlexMessage(val data: List<IssueJiraModel>): Supplier<FlexMessag
     private fun createBubble(team: Team): Bubble? {
         val heroBlock = createHeroBlock(team.image)
         val eligibleData = filterDataByTeam(team)
-        println(">>>>>>>>> ${team.name} : ${eligibleData.size}")
-        if (team == Team.ROCKMAN) println("ROCKMAN >>>>>>>>> $eligibleData")
         if (eligibleData.isEmpty()) return null
 
         val bodyBlock = createBodyBlock(

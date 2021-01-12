@@ -9,24 +9,21 @@ import com.linecorp.bot.model.message.Message
 import com.linecorp.bot.model.message.TextMessage
 import com.linecorp.bot.spring.boot.annotation.EventMapping
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler
-import com.lordcodes.turtle.GitCommands
-import com.lordcodes.turtle.shellRun
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import th.co.dv.b2p.linebot.config.GitConfig
 import th.co.dv.b2p.linebot.constant.*
 import th.co.dv.b2p.linebot.constant.Constant.PREFIX_SYMBOL
 import th.co.dv.b2p.linebot.services.*
+import th.co.dv.b2p.linebot.utilities.Utils.convertToString
 import th.co.dv.b2p.linebot.utilities.Utils.getEnumIgnoreCase
-import java.io.IOException
 import java.util.concurrent.ExecutionException
 
 @LineMessageHandler
 class LineBotController {
 
     @Autowired
-    lateinit var gitConfig: GitConfig
+    lateinit var gitService: GitService
 
     @Autowired
     lateinit var covidService: CovidService
@@ -134,78 +131,15 @@ class LineBotController {
      * Method for find the service that want to check the current release
      */
     private fun findReleaseForService(replyToken: String, arg: List<String>) {
-        val serviceName = getEnumIgnoreCase<Constant.Services>(arg.first())
+        if (arg.isEmpty()) this.replyText(replyToken, gitService.getAvailableProject().convertToString())
+        val serviceName = getEnumIgnoreCase<GitService.Service>(arg.first())
+                ?: return this.replyText(replyToken, gitService.getAvailableProject().convertToString())
 
-        when (serviceName) {
-            Constant.Services.INV,
-            Constant.Services.PO,
-            Constant.Services.GR,
-            Constant.Services.CN,
-            Constant.Services.DN,
-            Constant.Services.AGGREGATE,
-            Constant.Services.PAYMENT,
-            Constant.Services.COMMON,
-            Constant.Services.REQUEST -> getServiceBranch(replyToken, serviceName)
-            else -> this.replyText(replyToken, UNKNOWN_SERVICE)
-        }
-    }
+        val branches = gitService.getReleaseBranch(serviceName)
+        val branchesName = listOf("master") + branches.mapNotNull { it.name }
+        val branchesOutput = branchesName.convertToString()
 
-    /**
-     * Method for get service folder
-     */
-    fun Constant.Services.getFolder(): String? {
-        return try {
-            when(this) {
-                Constant.Services.INV -> gitConfig.inv!!
-                Constant.Services.PO -> gitConfig.po!!
-                Constant.Services.GR -> gitConfig.gr!!
-                Constant.Services.CN -> gitConfig.cn!!
-                Constant.Services.DN -> gitConfig.dn!!
-                Constant.Services.AGGREGATE -> gitConfig.aggregate!!
-                Constant.Services.PAYMENT -> gitConfig.payment!!
-                Constant.Services.REQUEST -> gitConfig.request!!
-                Constant.Services.COMMON -> gitConfig.common!!
-            }
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    /**
-     * Method for handle service command
-     *
-     */
-    private fun getServiceBranch(replyToken: String, service: Constant.Services) {
-        val folder = service.getFolder() ?: run {
-            this.replyText(replyToken, SERVICE_PATH_NOT_FOUND)
-            return
-        }
-        val pathDirectory = (gitConfig.directory?: "") + folder
-        val response =  runCommand(pathDirectory)
-        val result = if (response.isNullOrEmpty()) UNKNOWN else response!!
-        logger.info("Return result message: $result")
-        this.replyText(replyToken, result)
-    }
-
-
-    fun GitCommands.getFetch() = gitCommand(listOf("fetch", "origin"))
-    fun GitCommands.getBranch() = gitCommand(listOf("branch", "-r", "--list", "*/release-*"))
-
-    fun runCommand(path: String): String? {
-        try {
-
-            val output = shellRun {
-                changeWorkingDirectory(path)
-                git.getFetch()
-                git.getBranch()
-            }
-
-            logger.info("output: $output")
-            return output
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return null
-        }
+        this.replyText(replyToken, branchesOutput)
     }
 
     /**

@@ -45,7 +45,6 @@ class JiraService {
         val headers = HttpHeaders()
 
         val token = Base64.getEncoder().encodeToString(accessToken.toByteArray())
-        println("token : $token")
         headers.set(HttpHeaders.AUTHORIZATION, "Basic $token")
 
         var startAt = 0
@@ -72,13 +71,10 @@ class JiraService {
         } catch (e: Exception) {
             throw Exception(e.message, e)
         }
-
-        println("Jira output size ${outputs.size}")
         return outputs
     }
 
     private fun getDataByPage(headers: HttpHeaders, mode: Mode, value: String, startAt: Int = 0): JiraModel {
-        println("JIRA url: ${mode.completeUrl(value, startAt)}")
         val builder: UriComponentsBuilder = UriComponentsBuilder
                 .fromHttpUrl(mode.completeUrl(value, startAt))
         return restTemplate.exchange(

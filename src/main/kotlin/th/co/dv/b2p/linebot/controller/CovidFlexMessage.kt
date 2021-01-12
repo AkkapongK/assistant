@@ -138,13 +138,4 @@ class CovidFlexMessage(val covidService: CovidService) : Supplier<FlexMessage> {
                 .build()
     }
 
-//    private fun createFooterBlock(): Box {
-//        return Box.builder()
-//                .layout(FlexLayout.HORIZONTAL)
-//                .contents(asList(
-//                        Button.builder()
-//                                .action(URIAction("more", "https://example.com"))
-//                                .build()
-//                )).build()
-//    }
 }

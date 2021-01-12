@@ -53,4 +53,16 @@ object Utils {
         val zoneId = ZoneId.of("Asia/Bangkok").id
         return this.toZonedDateTime(zoneId).stringify(pattern)
     }
+
+    /**
+     *
+     */
+    fun List<String>.convertToString(prefix: String = ""): String {
+        var output = """"""
+        this.forEach {
+            if (output.isNotEmpty()) output += "\r\n"
+            output += "$prefix $it"
+        }
+        return output
+    }
 }

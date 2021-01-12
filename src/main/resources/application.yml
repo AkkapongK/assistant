@@ -2,15 +2,3 @@ line.bot:
   channel-token: 'nofdZ6ZNOmIgdeXW43XKL+Ync1b2PqLTzqiRQ84qKu9f9ZPnfp8O8JvjgCybOilmTqWF2JA7MAks2TpoLNoEshNQkxriLpsbTUcq6QfhS9mKVYhb9KVH6XTp48sQsaaM9gwYH1I5/E2JBHhVMdNObQdB04t89/1O/w1cDnyilFU='
   channel-secret: '987b12062ba57a7bfedc04e777420ead'
   handler.path: /callback
-
-git:
-  directory: /Users/akkapong/projects/P2P/
-  inv: invoice-service
-  po: po-service
-  gr: gr-service
-  cn: credit-note-service
-  dn: debit-note-service
-  aggregate: aggregate-service
-  payment: payment-service
-  request: request-service
-  common: b2p-common
