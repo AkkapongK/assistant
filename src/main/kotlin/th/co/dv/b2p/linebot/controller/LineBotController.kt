@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import th.co.dv.b2p.linebot.constant.*
 import th.co.dv.b2p.linebot.constant.Constant.PREFIX_SYMBOL
+import th.co.dv.b2p.linebot.model.LineMessage
 import th.co.dv.b2p.linebot.services.*
 import th.co.dv.b2p.linebot.utilities.Utils.convertToString
 import th.co.dv.b2p.linebot.utilities.Utils.getEnumIgnoreCase
@@ -39,6 +40,9 @@ class LineBotController {
 
     @Autowired
     lateinit var excelService: ExcelService
+
+    @Autowired
+    lateinit var lineService: LineService
 
     @Autowired
     lateinit var lineMessagingClient: LineMessagingClient
@@ -78,6 +82,7 @@ class LineBotController {
             Constant.Command.BITCOIN -> processBitcoin(replyToken, arg)
             Constant.Command.PLAN -> processReleasePlan(replyToken, arg)
             Constant.Command.DOC -> processGetDevDoc(replyToken, arg)
+            Constant.Command.BROADCAST -> processBroadcast(userId, replyToken, arg)
             else -> this.replyHelpFlexMessage(replyToken)
         }
     }
@@ -186,6 +191,23 @@ class LineBotController {
     }
 
     /**
+     * Method for process show dev doc
+     */
+    private fun processBroadcast(userId: String, replyToken: String, arg: MutableList<String>) {
+        if (arg.isEmpty()) this.replyText(replyToken, BROADCAST_NEED_MESSAGE)
+
+        // TODO: get user that subscribe
+        val to = listOf("U080295aaad0b3bcb412ff0b82093c61b")
+        val message = listOf(
+                LineMessage(
+                        type = "text",
+                        text = arg.joinToString(" ")
+                ))
+
+        lineService.broadcastMessage(userId, to, message)
+    }
+
+    /**
      * Method for reply Flex message
      */
     private fun replyJiraFlexMessage(replyToken: String, arg: List<String>) {
@@ -229,8 +251,8 @@ class LineBotController {
     /**
      * Method for reply text
      */
-    private fun replyText(replyToken: String, message: String) {
-        var message = message
+    private fun replyText(replyToken: String, messageInput: String) {
+        var message = messageInput
         if (replyToken.isEmpty()) {
             throw IllegalArgumentException("replyToken is not empty")
         }

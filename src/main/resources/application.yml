@@ -2,3 +2,5 @@ line.bot:
   channel-token: 'nofdZ6ZNOmIgdeXW43XKL+Ync1b2PqLTzqiRQ84qKu9f9ZPnfp8O8JvjgCybOilmTqWF2JA7MAks2TpoLNoEshNQkxriLpsbTUcq6QfhS9mKVYhb9KVH6XTp48sQsaaM9gwYH1I5/E2JBHhVMdNObQdB04t89/1O/w1cDnyilFU='
   channel-secret: '987b12062ba57a7bfedc04e777420ead'
   handler.path: /callback
+  broadcastIds: U080295aaad0b3bcb412ff0b82093c61b
+  baseUrl: https://api.line.me/v2/

@@ -3,6 +3,7 @@ package th.co.dv.b2p.linebot.constant
 object Constant {
 
     const val PREFIX_SYMBOL = "THB_"
+    const val COLON = ":"
     enum class Command(val key: List<String>) {
         RELEASE(listOf("release")),
         JIRA(listOf("jira")),
@@ -10,7 +11,8 @@ object Constant {
         GOLD(listOf("gold", "ทอง")),
         BITCOIN(listOf("bitcoin", "บิทคอยน์")),
         PLAN(listOf("plan")),
-        DOC(listOf("doc"))
+        DOC(listOf("doc")),
+        BROADCAST(listOf("broadcast"))
     }
 
     enum class Services {
