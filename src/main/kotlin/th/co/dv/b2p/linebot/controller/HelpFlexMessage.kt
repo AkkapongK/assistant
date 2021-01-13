@@ -27,8 +27,9 @@ class HelpFlexMessage : Supplier<FlexMessage> {
                 image = "https://marketplacelive.blob.core.windows.net/solution-logo/47dda901f2fa40c1a9c983b1a352e8fb.png",
                 description = "Track information of target story",
                 args = listOf(
-                        "Mode: story or sprint",
-                        "Value: bloc-xxx for story or b2p-xx for sprint"),
+                        "Mode: story, sprint or deploy",
+                        "Value: bloc-xxx for story, b2p-xx for sprint or Sponsor name for deploy",
+                        "Value2: environment now use fro deploy mode"),
                 usages = listOf(
                         "jira story bloc-16000: Show information of bloc 16000",
                         "jira sprint b2p-60: Show information of sprint 60")),

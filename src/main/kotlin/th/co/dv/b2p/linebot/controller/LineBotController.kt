@@ -178,15 +178,16 @@ class LineBotController {
     private fun replyJiraFlexMessage(replyToken: String, arg: List<String>) {
         val mode = arg.firstOrNull() ?: this.replyText(replyToken, JIRA_MODE_NOT_FOUND)
         val value = arg.getOrNull(1) ?: this.replyText(replyToken, JIRA_VALUE_NOT_FOUND)
-        when (mode.toString().toLowerCase() == "sprint") {
-            true -> {
+
+        when (mode.toString().toLowerCase()) {
+            "sprint" -> {
                 // Get sprint data
                 val data = jiraService.getInformation(JiraService.Mode.SPRINT, value.toString())
 
                 val jiraStoryFlexMessage = JiraSprintFlexMessage(data)
                 this.reply(replyToken, jiraStoryFlexMessage.get())
             }
-            false -> {
+            "story" -> {
                 val data = jiraService.getInformation(JiraService.Mode.ISSUE, value.toString())
                 when (data.isEmpty()) {
                     true -> this.replyText(replyToken, JIRA_BLOC_NOT_FOUND)
@@ -196,6 +197,17 @@ class LineBotController {
                     }
                 }
 
+            }
+            "deploy" -> {
+                val value2 = arg.getOrNull(2) ?: this.replyText(replyToken, JIRA_ENV_NOT_FOUND)
+                val data = jiraService.getInformation(JiraService.Mode.DEPLOY, value.toString(), value2.toString())
+                when (data.isEmpty()) {
+                    true -> this.replyText(replyToken, JIRA_DEPLOY_NOT_FOUND)
+                    false -> {
+                        val tag = jiraService.getDeployTag(data.first())
+                        this.replyText(replyToken, tag.convertToString())
+                    }
+                }
             }
         }
 

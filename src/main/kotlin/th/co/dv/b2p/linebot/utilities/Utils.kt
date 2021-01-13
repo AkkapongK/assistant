@@ -65,4 +65,25 @@ object Utils {
         }
         return output
     }
+
+    /**
+     * Use for get field value via dynamic field name.
+     * @param targetFieldName: field that we need to get value
+     * @param ignoreCase: field to support getting field name with case insensitive, default value is false (case sensitive)
+     * example:
+     *  val vendor = Vendor(code = "Test Code", legalName = "Test Legalname")
+     *      vendor.getFieldValue<String>("code")
+     *      vendor.getFieldValue<Boolean>("allowInvoiceFinancing")
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun <T> Any.getFieldValue(targetFieldName: String, ignoreCase: Boolean = false): T? {
+        val clazz = this::class.java
+        val targetField = clazz.declaredFields.singleOrNull { it.name.equals(targetFieldName, ignoreCase = ignoreCase) }
+        return if (targetField != null) {
+            targetField.isAccessible = true
+            targetField.get(this) as T
+        } else {
+            throw IllegalArgumentException("Field: $targetFieldName not exist in class ${clazz.name}")
+        }
+    }
 }
