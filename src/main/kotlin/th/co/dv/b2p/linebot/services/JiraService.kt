@@ -27,6 +27,13 @@ class JiraService {
     private val url = "https://scb-digitalventures.atlassian.net/rest/api/3/search?jql="
     private val accessToken = "akkapong.k@dv.co.th:UgBUFfAzLelbbNQv4UHlDA55"
 
+    enum class Doc(val url: String, val project: String, val release: String) {
+        B2P_R9(
+                url = "https://scb-digitalventures.atlassian.net/wiki/spaces/BLOC/pages/1539047438/B2P+R9+Wiki",
+                project = "b2p",
+                release = "9")
+    }
+
     /**
      * https://scb-digitalventures.atlassian.net/rest/api/3/search?jql=cf[10218]=newsit2+AND+scope=irpc&maxResults=5
      */
@@ -92,7 +99,6 @@ class JiraService {
     private fun getDataByPage(headers: HttpHeaders, mode: Mode, value: String, value2: String? = null, startAt: Int = 0): JiraModel {
         val builder: UriComponentsBuilder = UriComponentsBuilder
                 .fromHttpUrl(mode.completeUrl(value, value2, startAt))
-        println(">>>>>>>>>> ${mode.completeUrl(value, value2, startAt)}")
         return restTemplate.exchange(
                 builder.build(true).toUri(),
                 HttpMethod.GET,
@@ -106,9 +112,19 @@ class JiraService {
      */
     fun getDeployTag(issueJiraModel: IssueJiraModel): List<String> {
         val fields = issueJiraModel.fields!!
-        return mappingCustomField.map { (customFiled, customLabel) ->
-            val value = fields.getFieldValue<String>(customFiled)
+        return mappingCustomField.mapNotNull { (customFiled, customLabel) ->
+            val value = fields.getFieldValue<String>(customFiled) ?: return@mapNotNull null
             "$customLabel : $value"
         }
+    }
+
+    /**
+     * Method for get doc url by project and release
+     */
+    fun getDocUrl(project: String, release: String): String? {
+        return Doc.values().find {
+            it.release == release.toLowerCase().trim() &&
+                    it.project == project.toLowerCase().trim()
+        }?.url
     }
 }

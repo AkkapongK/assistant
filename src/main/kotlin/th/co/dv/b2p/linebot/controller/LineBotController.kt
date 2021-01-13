@@ -77,6 +77,7 @@ class LineBotController {
             Constant.Command.GOLD -> this.replyGoldFlexMessage(replyToken)
             Constant.Command.BITCOIN -> processBitcoin(replyToken, arg)
             Constant.Command.PLAN -> processReleasePlan(replyToken, arg)
+            Constant.Command.DOC -> processGetDevDoc(replyToken, arg)
             else -> this.replyHelpFlexMessage(replyToken)
         }
     }
@@ -170,6 +171,18 @@ class LineBotController {
     private fun replyHelpFlexMessage(replyToken: String) {
         val helpFlexMessage = HelpFlexMessage()
         this.reply(replyToken, helpFlexMessage.get())
+    }
+
+    /**
+     * Method for process show dev doc
+     */
+    private fun processGetDevDoc(replyToken: String, arg: MutableList<String>) {
+        if (arg.size < 2) this.replyText(replyToken, DOC_REQUIRED_PROJECT_AND_RELEASE)
+        val url = try {
+            jiraService.getDocUrl(arg.first(), arg.get(1))
+        } catch (e: Exception) { null }
+
+        this.replyText(replyToken, url?: GET_DOC_ERROR)
     }
 
     /**

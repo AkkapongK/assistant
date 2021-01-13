@@ -9,7 +9,8 @@ object Constant {
         COVID(listOf("covid", "โควิด")),
         GOLD(listOf("gold", "ทอง")),
         BITCOIN(listOf("bitcoin", "บิทคอยน์")),
-        PLAN(listOf("plan"))
+        PLAN(listOf("plan")),
+        DOC(listOf("doc"))
     }
 
     enum class Services {

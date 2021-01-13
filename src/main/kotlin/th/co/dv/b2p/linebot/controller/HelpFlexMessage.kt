@@ -57,6 +57,15 @@ class HelpFlexMessage : Supplier<FlexMessage> {
                         "plan b2p deploy: Show expected deploy date for all release",
                         "plan b2p deploy 9.2.3: Show expected deploy date for release 9.2.3"
                 )),
+        DOC(
+                image = "https://media.itpro.co.uk/image/upload/t_primary-image-desktop@2/v1570817631/itpro/2019/09/document_shutterstock_1416401996.jpg",
+                description = "Show developer document",
+                args = listOf(
+                        "Project: b2p",
+                        "Release: 9"),
+                usages = listOf(
+                        "doc b2p 9: Show document link for b2p project release 9"
+                )),
 
     }
 
@@ -68,6 +77,7 @@ class HelpFlexMessage : Supplier<FlexMessage> {
         val bitcoinBubble = createBubble(Document.BITCOIN)
         val goldBubble = createBubble(Document.GOLD)
         val planBubble = createBubble(Document.PLAN)
+        val docBubble = createBubble(Document.DOC)
 
         val carousel = Carousel.builder()
                 .contents(listOf(
@@ -76,7 +86,8 @@ class HelpFlexMessage : Supplier<FlexMessage> {
                         covidBubble,
                         bitcoinBubble,
                         goldBubble,
-                        planBubble))
+                        planBubble,
+                        docBubble))
                 .build()
         return FlexMessage("Document information", carousel)
     }
