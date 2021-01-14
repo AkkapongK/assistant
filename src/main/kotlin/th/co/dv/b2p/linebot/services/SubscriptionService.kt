@@ -1,6 +1,9 @@
 package th.co.dv.b2p.linebot.services
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
 import th.co.dv.b2p.linebot.constant.INVALID_SUBSCRIBE_NAME
 import th.co.dv.b2p.linebot.constant.INVALID_SUBSCRIBE_TYPE
@@ -13,8 +16,8 @@ import java.io.FileWriter
 @Service
 class SubscriptionService {
 
-    @Value("\${subscription.path}")
-    private var subscriptionFile = ""
+    @Autowired
+    lateinit var subscriptionProperties: SubscriptionProperties
 
     private val fieldSeparator = "|"
     private val userIdSeparator = ","
@@ -24,12 +27,8 @@ class SubscriptionService {
         GIT
     }
 
-    enum class BroadcastUser(val value: String) {
-        OAT("Ud6ea1a3aaf44201a7ab7ee1e500f2d79)")
-    }
-
     fun readSubscriptionData(): List<SubscriptionModel> {
-        val file = File(subscriptionFile)
+        val file = File(subscriptionProperties.path)
         return file.readLines().map {
             val data = it.split(fieldSeparator)
             SubscriptionModel(
@@ -41,7 +40,7 @@ class SubscriptionService {
     }
 
     private fun writeSubscriptionData(data: List<SubscriptionModel>) {
-        val file = File(subscriptionFile)
+        val file = File(subscriptionProperties.path)
         val newLine= System.getProperty("line.separator")
         var fileWrite: FileWriter? = null
         var bufferedWriter: BufferedWriter? = null
@@ -69,7 +68,8 @@ class SubscriptionService {
                 Utils.getEnumIgnoreCase<GitService.Service>(name)?.name
             }
             SubscriptionType.USER -> {
-                Utils.getEnumIgnoreCase<BroadcastUser>(name)?.name
+                val upperName = name.toUpperCase()
+                subscriptionProperties.broadcaster[upperName]?.let { upperName }
             }
         } ?: throw Exception(INVALID_SUBSCRIBE_NAME)
     }
@@ -127,7 +127,7 @@ class SubscriptionService {
 
     fun getAllSubscription() : String {
         val gitStr = "${SubscriptionType.GIT.name}: ${GitService.Service.values().joinToString()}"
-        val userStr = "${SubscriptionType.USER.name}: ${BroadcastUser.values().joinToString()}"
+        val userStr = "${SubscriptionType.USER.name}: ${subscriptionProperties.broadcaster.keys.joinToString()}"
         return "$gitStr\r\n$userStr"
     }
 
@@ -142,3 +142,10 @@ class SubscriptionService {
         return this.filter { it.userIds.contains(userId) }
     }
 }
+
+@Configuration
+@ConfigurationProperties("subscription")
+data class SubscriptionProperties(
+        var path: String? = null,
+        var broadcaster: MutableMap<String, String> = mutableMapOf()
+)

@@ -7,4 +7,7 @@ line.bot:
 
 subscription:
   path: /Users/jittawat.t/Desktop/subscription.csv
+  broadcaster:
+    OAT: Ud6ea1a3aaf44201a7ab7ee1e500f2d79
+    OHM: thisisid
 
