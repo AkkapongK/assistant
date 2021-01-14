@@ -8,6 +8,7 @@ class WebSecurityConfig {
 
     @GetMapping("/test")
     fun test(): String {
+        println("........ Test service ........")
         return "{\"success\": true}"
     }
 }
