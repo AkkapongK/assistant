@@ -13,6 +13,6 @@ COPY build/libs/line-bot-0.0.1-SNAPSHOT.jar /opt/app/linebot.jar
 # change working directory
 WORKDIR /opt/app
 
-EXPOSE 10088
+EXPOSE 8080
 
 RUN ["chmod", "+x", "/opt/app/linebot.jar"]
