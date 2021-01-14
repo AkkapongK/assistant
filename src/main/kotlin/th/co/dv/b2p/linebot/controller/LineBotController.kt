@@ -41,6 +41,9 @@ class LineBotController {
     lateinit var excelService: ExcelService
 
     @Autowired
+    lateinit var subscriptionService: SubscriptionService
+
+    @Autowired
     lateinit var lineMessagingClient: LineMessagingClient
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -78,6 +81,7 @@ class LineBotController {
             Constant.Command.BITCOIN -> processBitcoin(replyToken, arg)
             Constant.Command.PLAN -> processReleasePlan(replyToken, arg)
             Constant.Command.DOC -> processGetDevDoc(replyToken, arg)
+            Constant.Command.SUBSCRIBE -> processSubscription(replyToken, arg, userId)
             else -> this.replyHelpFlexMessage(replyToken)
         }
     }
@@ -125,6 +129,33 @@ class LineBotController {
                 }
             }
             false -> this.replyText(replyToken, PROJECT_NOT_FOUND)
+        }
+    }
+
+    /**
+     * Method to process release plan
+     */
+    private fun processSubscription(replyToken: String, arg: MutableList<String>, userId: String) {
+        val subscriptionCommand = arg.firstOrNull()?.let { arg.removeAt(0).toLowerCase() }
+
+        when (subscriptionCommand) {
+            Constant.SubscriptionCommand.ADD.value -> {
+                val result = subscriptionService.doSubscribe(userId, arg)
+                this.replyText(replyToken, result)
+            }
+            Constant.SubscriptionCommand.REMOVE.value -> {
+                val result = subscriptionService.doUnsubscribe(userId, arg)
+                this.replyText(replyToken, result)
+            }
+            Constant.SubscriptionCommand.ME.value -> {
+                val data = subscriptionService.getMySubscription(userId)
+                this.replyText(replyToken, data)
+            }
+            Constant.SubscriptionCommand.ALL.value -> {
+                val data = subscriptionService.getAllSubscription()
+                this.replyText(replyToken, data)
+            }
+            else -> this.replyText(replyToken, INVALID_SUBSCRIBE_COMMAND)
         }
     }
 

@@ -10,7 +10,8 @@ object Constant {
         GOLD(listOf("gold", "ทอง")),
         BITCOIN(listOf("bitcoin", "บิทคอยน์")),
         PLAN(listOf("plan")),
-        DOC(listOf("doc"))
+        DOC(listOf("doc")),
+        SUBSCRIBE(listOf("sub", "subscribe"))
     }
 
     enum class Services {
@@ -52,4 +53,12 @@ object Constant {
 
     const val DEVELOPER_TAG = "customfield_10100"
     const val UNASSIGN = "UNASSIGN"
+
+    enum class SubscriptionCommand(val value: String) {
+        ME("me"),
+        ALL("all"),
+        ADD("add"),
+        REMOVE("remove")
+    }
+
 }
