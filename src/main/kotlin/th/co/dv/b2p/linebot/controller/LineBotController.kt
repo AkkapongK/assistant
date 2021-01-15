@@ -143,24 +143,28 @@ class LineBotController {
     private fun processSubscription(replyToken: String, arg: MutableList<String>, userId: String) {
         val subscriptionCommand = arg.firstOrNull()?.let { arg.removeAt(0).toLowerCase() }
 
-        when (subscriptionCommand) {
-            Constant.SubscriptionCommand.ADD.value -> {
-                val result = subscriptionService.doSubscribe(userId, arg)
-                this.replyText(replyToken, result)
+        try {
+            when (subscriptionCommand) {
+                Constant.SubscriptionCommand.ADD.value -> {
+                    val result = subscriptionService.doSubscribe(userId, arg)
+                    this.replyText(replyToken, result)
+                }
+                Constant.SubscriptionCommand.REMOVE.value -> {
+                    val result = subscriptionService.doUnsubscribe(userId, arg)
+                    this.replyText(replyToken, result)
+                }
+                Constant.SubscriptionCommand.ME.value -> {
+                    val data = subscriptionService.getMySubscription(userId)
+                    this.replyText(replyToken, data)
+                }
+                Constant.SubscriptionCommand.ALL.value -> {
+                    val data = subscriptionService.getAllSubscription()
+                    this.replyText(replyToken, data)
+                }
+                else -> this.replyText(replyToken, INVALID_SUBSCRIBE_COMMAND)
             }
-            Constant.SubscriptionCommand.REMOVE.value -> {
-                val result = subscriptionService.doUnsubscribe(userId, arg)
-                this.replyText(replyToken, result)
-            }
-            Constant.SubscriptionCommand.ME.value -> {
-                val data = subscriptionService.getMySubscription(userId)
-                this.replyText(replyToken, data)
-            }
-            Constant.SubscriptionCommand.ALL.value -> {
-                val data = subscriptionService.getAllSubscription()
-                this.replyText(replyToken, data)
-            }
-            else -> this.replyText(replyToken, INVALID_SUBSCRIBE_COMMAND)
+        } catch (e: Exception) {
+            this.replyText(replyToken, e.message ?: INTERNAL_SERVER_ERROR)
         }
     }
 
