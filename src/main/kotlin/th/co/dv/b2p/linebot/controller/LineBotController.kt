@@ -231,15 +231,17 @@ class LineBotController {
     private fun processBroadcast(userId: String, replyToken: String, arg: MutableList<String>) {
         if (arg.isEmpty()) this.replyText(replyToken, BROADCAST_NEED_MESSAGE)
 
-        // TODO: get user that subscribe
-        val to = listOf("U080295aaad0b3bcb412ff0b82093c61b")
+        val to = subscriptionService.getBroadcastSubscription(userId)
+        val toWithoutMe = to.filter { it != userId }
+
+        if (toWithoutMe.isEmpty()) return
         val message = listOf(
                 LineMessage(
                         type = "text",
                         text = arg.joinToString(" ")
                 ))
 
-        lineService.broadcastMessage(userId, to, message)
+        lineService.broadcastMessage(userId, toWithoutMe, message)
     }
 
     /**
