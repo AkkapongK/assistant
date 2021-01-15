@@ -9,6 +9,6 @@ import org.springframework.stereotype.Component
 data class LineConfiguration (
     @Value("{#channel-token}")
     var channelToken: String? = null,
-    var broadcastIds: String? = null,
+    var broadcaster: MutableMap<String, String> = mutableMapOf(),
     var baseUrl: String? = null
 )

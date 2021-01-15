@@ -4,6 +4,7 @@ object Constant {
 
     const val PREFIX_SYMBOL = "THB_"
     const val COLON = ":"
+    const val COMMA = ","
     enum class Command(val key: List<String>) {
         RELEASE(listOf("release")),
         JIRA(listOf("jira")),

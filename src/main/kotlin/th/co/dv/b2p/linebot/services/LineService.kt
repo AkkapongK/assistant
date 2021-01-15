@@ -39,8 +39,7 @@ class LineService {
      * Broadcast message
      */
     fun broadcastMessage(from: String, receivedIds: List<String>, messages: List<LineMessage>) {
-        val allowBroadcast = lineConfiguration.broadcastIds?.split(COLON) ?: emptyList()
-        if (allowBroadcast.contains(from).not()) return
+        if (haveBroadcastPermission(from).not()) return
 
         val builder: UriComponentsBuilder = UriComponentsBuilder
                 .fromHttpUrl(lineConfiguration.baseUrl!! + uri["broadcast"])
@@ -58,6 +57,14 @@ class LineService {
         } catch (e: Exception) {
             throw Exception(e.message, e)
         }
+    }
+
+    /**
+     * Method to validate permission
+     */
+    fun haveBroadcastPermission(userId: String): Boolean {
+        val allowIds = lineConfiguration.broadcaster.values
+        return allowIds.contains(userId)
     }
 
 }

@@ -2,12 +2,11 @@ line.bot:
   channel-token: '2NdhgLNW6+jK3YZrO1kcE2lnjhu87cnCL8coEk/VWKhxlHiagjCYvGZlkFV0V3VIleII7P7dhgCscgrYBm9MGWwJ7qk8mS7GuG2r/Taejo5iShxigsakbsree+/lUVxLl9D2iU6g089yjVGtSVQMnAdB04t89/1O/w1cDnyilFU='
   channel-secret: '3b53afc7b0f87d49a1f1ab693075817c'
   handler.path: /callback
-  broadcastIds: U080295aaad0b3bcb412ff0b82093c61b
   baseUrl: https://api.line.me/v2/
+  broadcaster:
+    OAT: Ud6ea1a3aaf44201a7ab7ee1e500f2d79
+    OHM: U080295aaad0b3bcb412ff0b82093c61b
 
 subscription:
   path: /Users/jittawat.t/Desktop/subscription.csv
-  broadcaster:
-    OAT: Ud6ea1a3aaf44201a7ab7ee1e500f2d79
-    OHM: thisisid
 

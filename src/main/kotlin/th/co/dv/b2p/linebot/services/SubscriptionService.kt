@@ -1,10 +1,11 @@
 package th.co.dv.b2p.linebot.services
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
+import th.co.dv.b2p.linebot.config.LineConfiguration
+import th.co.dv.b2p.linebot.constant.Constant.COMMA
 import th.co.dv.b2p.linebot.constant.INVALID_SUBSCRIBE_NAME
 import th.co.dv.b2p.linebot.constant.INVALID_SUBSCRIBE_TYPE
 import th.co.dv.b2p.linebot.model.SubscriptionModel
@@ -19,11 +20,14 @@ class SubscriptionService {
     @Autowired
     lateinit var subscriptionProperties: SubscriptionProperties
 
+    @Autowired
+    lateinit var lineService: LineService
+
     private val fieldSeparator = "|"
     private val userIdSeparator = ","
 
     enum class SubscriptionType {
-        USER,
+        BROADCASTER,
         GIT
     }
 
@@ -62,14 +66,13 @@ class SubscriptionService {
     }
 
     private fun getSubscriptionName(type: SubscriptionType, name: String?): String {
-        if (name == null) throw Exception(INVALID_SUBSCRIBE_NAME)
         return when (type) {
             SubscriptionType.GIT -> {
+                if (name == null) throw Exception(INVALID_SUBSCRIBE_NAME)
                 Utils.getEnumIgnoreCase<GitService.Service>(name)?.name
             }
-            SubscriptionType.USER -> {
-                val upperName = name.toUpperCase()
-                subscriptionProperties.broadcaster[upperName]?.let { upperName }
+            SubscriptionType.BROADCASTER -> {
+                SubscriptionType.BROADCASTER.name
             }
         } ?: throw Exception(INVALID_SUBSCRIBE_NAME)
     }
@@ -125,10 +128,23 @@ class SubscriptionService {
         return data.formatToString()
     }
 
-    fun getAllSubscription() : String {
+    fun getAllSubscriptionType() : String {
         val gitStr = "${SubscriptionType.GIT.name}: ${GitService.Service.values().joinToString()}"
-        val userStr = "${SubscriptionType.USER.name}: ${subscriptionProperties.broadcaster.keys.joinToString()}"
-        return "$gitStr\r\n$userStr"
+        val userStr = SubscriptionType.BROADCASTER.name
+        return "- $userStr\r\n- $gitStr"
+    }
+
+    /**
+     * Methof to get all user id that subscribe this broadcaster user
+     */
+    fun getBroadcastSubscription(userId: String) : List<String> {
+        if (lineService.haveBroadcastPermission(userId).not()) return emptyList()
+        val subscriptionData = readSubscriptionData()
+        val broadcasterSubscription = subscriptionData.find {
+            it.type == SubscriptionType.BROADCASTER.name && it.name == SubscriptionType.BROADCASTER.name
+        }
+        return broadcasterSubscription?.userIds ?: emptyList()
+
     }
 
     fun List<SubscriptionModel>.formatToString(): String {
@@ -146,6 +162,5 @@ class SubscriptionService {
 @Configuration
 @ConfigurationProperties("subscription")
 data class SubscriptionProperties(
-        var path: String? = null,
-        var broadcaster: MutableMap<String, String> = mutableMapOf()
+        var path: String? = null
 )
