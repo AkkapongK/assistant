@@ -29,10 +29,11 @@ class HelpFlexMessage : Supplier<FlexMessage> {
                 args = listOf(
                         "Mode: story, sprint or deploy",
                         "Value: bloc-xxx for story, b2p-xx for sprint or Sponsor name for deploy",
-                        "Value2: environment now use fro deploy mode"),
+                        "Value2: environment now use for deploy mode"),
                 usages = listOf(
                         "jira story bloc-16000: Show information of bloc 16000",
-                        "jira sprint b2p-60: Show information of sprint 60")),
+                        "jira sprint b2p-60: Show information of sprint 60",
+                        "jira deploy mint newdev3: Show lasted tagged that deployed")),
         COVID(
                 image = "https://d18lkz4dllo6v2.cloudfront.net/cumulus_uploads/entry/2020-04-01/COVID%20Getty%20Image.jpg?w=660",
                 description = "Show updated covid information in Thailand"),
