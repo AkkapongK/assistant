@@ -9,6 +9,8 @@ import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
+import th.co.dv.b2p.linebot.constant.Constant.NOT_DEPLOY
+import th.co.dv.b2p.linebot.model.IssueFiledJiraModel
 import th.co.dv.b2p.linebot.model.IssueJiraModel
 import th.co.dv.b2p.linebot.model.JiraModel
 import th.co.dv.b2p.linebot.model.mappingCustomField
@@ -21,8 +23,6 @@ class JiraService {
 
     @Autowired
     lateinit var restTemplate: RestTemplate
-
-    private val mapper = jacksonObjectMapper()
 
     private val url = "https://scb-digitalventures.atlassian.net/rest/api/3/search?jql="
     private val accessToken = "akkapong.k@dv.co.th:UgBUFfAzLelbbNQv4UHlDA55"
@@ -49,11 +49,15 @@ class JiraService {
     /**
      * Method for complete url
      */
-    private fun Mode.completeUrl(value: String, value2: String? = null, startAt: Int = 0): String {
+    private fun Mode.completeUrl(value: String, value2: String? = null, startAt: Int = 0, maxResults: Int? = null): String {
         return when (this) {
             Mode.DEPLOY -> url + URLEncoder.encode(this.key.replace(":scope", value).replace(":env", value2!!), UTF8)
-                    .replace(ANDENCODE, AND) + "&startAt=$startAt"
-            else -> url + URLEncoder.encode(this.key + value, UTF8) + "&startAt=$startAt"
+                    .replace(ANDENCODE, AND) + "&startAt=$startAt" + (
+                        if (maxResults != null) "&maxResults=$maxResults" else ""
+                    )
+            else -> url + URLEncoder.encode(this.key + value, UTF8) + "&startAt=$startAt" + (
+                        if (maxResults != null) "&maxResults=$maxResults" else ""
+                    )
         }
 
     }
@@ -61,7 +65,7 @@ class JiraService {
     /**
      * Get Gold information
      */
-    fun getInformation(mode: Mode, value: String, value2: String?= null): List<IssueJiraModel> {
+    fun getInformation(mode: Mode, value: String, value2: String?= null, maxResults: Int? = null): List<IssueJiraModel> {
 
         val headers = HttpHeaders()
 
@@ -81,8 +85,9 @@ class JiraService {
                         mode = mode,
                         value = value,
                         value2 = value2,
-                        startAt = startAt)
-                total = response.total!!
+                        startAt = startAt,
+                        maxResults = maxResults)
+                total = maxResults ?: response.total!!
                 currentRecord =  response.startAt!! + response.maxResults!!
                 startAt += response.maxResults!!
 
@@ -96,9 +101,14 @@ class JiraService {
         return outputs
     }
 
-    private fun getDataByPage(headers: HttpHeaders, mode: Mode, value: String, value2: String? = null, startAt: Int = 0): JiraModel {
+    private fun getDataByPage(headers: HttpHeaders,
+                              mode: Mode,
+                              value: String,
+                              value2: String? = null,
+                              startAt: Int = 0,
+                              maxResults: Int? = null): JiraModel {
         val builder: UriComponentsBuilder = UriComponentsBuilder
-                .fromHttpUrl(mode.completeUrl(value, value2, startAt))
+                .fromHttpUrl(mode.completeUrl(value, value2, startAt, maxResults))
         return restTemplate.exchange(
                 builder.build(true).toUri(),
                 HttpMethod.GET,
@@ -107,13 +117,22 @@ class JiraService {
         ).body!!
     }
 
+    private fun List<IssueFiledJiraModel>.getTargetCustomField(customFiled: String): String? {
+        val issueField = this.firstOrNull {
+            val customVal = it.getFieldValue<String>(customFiled)
+            customVal != null && customVal != NOT_DEPLOY
+        } ?: return null
+
+        return issueField.getFieldValue<String>(customFiled)
+    }
+
     /**
      * Method get tag deploy
      */
-    fun getDeployTag(issueJiraModel: IssueJiraModel): List<String> {
-        val fields = issueJiraModel.fields!!
-        return mappingCustomField.mapNotNull { (customFiled, customLabel) ->
-            val value = fields.getFieldValue<String>(customFiled) ?: return@mapNotNull null
+    fun getDeployTag(issueJiraModel: List<IssueJiraModel>): List<String> {
+        val fields = issueJiraModel.map { it.fields!! }
+        return mappingCustomField.map { (customFiled, customLabel) ->
+             val value = fields.getTargetCustomField(customFiled) ?: NOT_DEPLOY
             "$customLabel : $value"
         }
     }
