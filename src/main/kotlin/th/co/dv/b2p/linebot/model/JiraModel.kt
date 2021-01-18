@@ -120,7 +120,7 @@ data class SquadJiraModel(
 
 val mappingCustomField = mapOf(
         "customfield_10222" to "Email",
-        "customfield_10223" to "Bot not",
+        "customfield_10223" to "Bot noi",
         "customfield_10235" to "Purchase",
         "customfield_10231" to "Goods",
         "customfield_10232" to "Invoice",
@@ -140,6 +140,8 @@ val mappingCustomField = mapOf(
         "customfield_10208" to "New UI",
 
         "customfield_10233" to "Master",
+        "customfield_10236" to "Configuration",
+        "customfield_10246" to "User",
 
         "customfield_10275" to "Custom-Mint",
         "customfield_10274" to "Custom-SSR",
@@ -147,8 +149,14 @@ val mappingCustomField = mapOf(
         "customfield_10277" to "Custom-Pruksa",
         "customfield_10295" to "Custom-Snp",
         "customfield_10240" to "SCG bank custom",
-        "customfield_10238" to "Custom-Invoice"
+        "customfield_10238" to "Custom-Invoice",
+
+        "customfield_10206" to "Corda",
+
+        "customfield_10226" to "Onboard",
+        "customfield_10251" to "Onboard admin",
+        "customfield_10252" to "Self onboard"
 
 
-
+        //TODO: Add more service here
 )

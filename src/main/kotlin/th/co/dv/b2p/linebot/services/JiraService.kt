@@ -40,7 +40,7 @@ class JiraService {
     enum class Mode(val key: String) {
         SPRINT("sprint="),
         ISSUE("issue="),
-        DEPLOY("cf[10218]=:env+AND+scope=:scope")
+        DEPLOY("cf[10214]=:env+AND+scope=:scope")
     }
     private val AND = "+AND+"
     private val ANDENCODE = "%2BAND%2B"
@@ -131,8 +131,8 @@ class JiraService {
      */
     fun getDeployTag(issueJiraModel: List<IssueJiraModel>): List<String> {
         val fields = issueJiraModel.map { it.fields!! }
-        return mappingCustomField.map { (customFiled, customLabel) ->
-             val value = fields.getTargetCustomField(customFiled) ?: NOT_DEPLOY
+        return mappingCustomField.mapNotNull { (customFiled, customLabel) ->
+             val value = fields.getTargetCustomField(customFiled) ?: return@mapNotNull null
             "$customLabel : $value"
         }
     }

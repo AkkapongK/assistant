@@ -276,7 +276,7 @@ class LineBotController {
                         JiraService.Mode.DEPLOY,
                         value.toString(),
                         value2.toString(),
-                        10
+                        20
                 )
                 when (data.isEmpty()) {
                     true -> this.replyText(replyToken, JIRA_DEPLOY_NOT_FOUND)
