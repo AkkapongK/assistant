@@ -62,7 +62,14 @@ data class IssueFiledJiraModel(
         var customfield_10277: String? = null,
         var customfield_10295: String? = null,
         var customfield_10240: String? = null,
-        var customfield_10238: String? = null
+        var customfield_10238: String? = null,
+
+        var customfield_10236: String? = null,
+        var customfield_10246: String? = null,
+        var customfield_10206: String? = null,
+        var customfield_10226: String? = null,
+        var customfield_10251: String? = null,
+        var customfield_10252: String? = null
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
