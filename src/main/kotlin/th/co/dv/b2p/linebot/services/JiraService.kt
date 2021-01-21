@@ -40,7 +40,7 @@ class JiraService {
     enum class Mode(val key: String) {
         SPRINT("sprint="),
         ISSUE("issue="),
-        DEPLOY("cf[10214]=:env+AND+scope=:scope")
+        DEPLOY("cf[10218]=:env+AND+scope=:scope")
     }
     private val AND = "+AND+"
     private val ANDENCODE = "%2BAND%2B"
