@@ -1,6 +1,6 @@
 line.bot:
-  channel-token: '2NdhgLNW6+jK3YZrO1kcE2lnjhu87cnCL8coEk/VWKhxlHiagjCYvGZlkFV0V3VIleII7P7dhgCscgrYBm9MGWwJ7qk8mS7GuG2r/Taejo5iShxigsakbsree+/lUVxLl9D2iU6g089yjVGtSVQMnAdB04t89/1O/w1cDnyilFU='
-  channel-secret: '3b53afc7b0f87d49a1f1ab693075817c'
+  channel-token: 'cwJTpfEgbIGRszTR2bhMH/a+yqyU0QhjD5OzJ6CDlS5BzZ47u/zol4uIocku9wAQSkMSOrnEsE2chVEJt5VL7hwlZy9chRDSUXLdPiXpLK2L4T7dzrHMYsSUWglXW7SEhyHW/yKaoIWNaEqStZV3UAdB04t89/1O/w1cDnyilFU='
+  channel-secret: 'f48eaac5b0fbb026c66ebd9a4dd1961b'
   handler.path: /callback
   baseUrl: https://api.line.me/v2/
   broadcaster:

@@ -1,14 +1,17 @@
 package th.co.dv.b2p.linebot.utilities
 
+import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 object Utils {
 
     /** Date format constants**/
     const val DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm"
+    const val DEFAULT_FORMAT = "dd/MM/yyyy"
 
 
 
@@ -85,5 +88,21 @@ object Utils {
         } else {
             throw IllegalArgumentException("Field: $targetFieldName not exist in class ${clazz.name}")
         }
+    }
+
+    private fun getDateFormat(format: String): SimpleDateFormat {
+        return SimpleDateFormat(format, Locale.US)
+    }
+
+    fun convertDateToString(date: Date?, format: String): String {
+        if (null == date)
+            return ""
+
+        val sFormat = getDateFormat(format)
+        return sFormat.format(date)
+    }
+
+    fun convertDateToString(date: Date?): String {
+        return convertDateToString(date, DEFAULT_FORMAT)
     }
 }

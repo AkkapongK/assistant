@@ -42,6 +42,9 @@ class LineBotController {
     lateinit var excelService: ExcelService
 
     @Autowired
+    lateinit var squadService: SquadService
+
+    @Autowired
     lateinit var subscriptionService: SubscriptionService
 
     @Autowired
@@ -87,6 +90,7 @@ class LineBotController {
             Constant.Command.DOC -> processGetDevDoc(replyToken, arg)
             Constant.Command.SUBSCRIBE -> processSubscription(replyToken, arg, userId)
             Constant.Command.BROADCAST -> processBroadcast(userId, replyToken, arg)
+            Constant.Command.SQUAD -> processSquad(replyToken, arg)
             else -> this.replyHelpFlexMessage(replyToken)
         }
     }
@@ -242,6 +246,19 @@ class LineBotController {
                 ))
 
         lineService.broadcastMessage(userId, toWithoutMe, message)
+    }
+
+    /**
+     * Method for process squad command
+     */
+    private fun processSquad(replyToken: String, arg: MutableList<String>) {
+        val userUpdateds = squadService.getSquadUpdated(arg)
+        val outputs = userUpdateds.map {
+            """${it.name} : 
+${it.updated}
+            """
+        }
+        this.replyText(replyToken, outputs.convertToString())
     }
 
     /**
