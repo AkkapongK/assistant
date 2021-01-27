@@ -5,9 +5,11 @@ import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.stereotype.Service
+import th.co.dv.b2p.linebot.constant.Constant
 import th.co.dv.b2p.linebot.constant.SQUAD_NAME_IS_REQUIRED
 import th.co.dv.b2p.linebot.model.SquadUpdatedModel
 import th.co.dv.b2p.linebot.model.UserUpdatedModel
+import th.co.dv.b2p.linebot.utilities.Utils
 import th.co.dv.b2p.linebot.utilities.Utils.convertDateToString
 import java.io.File
 import java.util.*
@@ -26,7 +28,8 @@ class SquadService {
         val excelFile = File(updatedFileName)
         val workbook = XSSFWorkbook(excelFile)
 
-        val sheetName = args.firstOrNull()?.toLowerCase() ?: throw Exception(SQUAD_NAME_IS_REQUIRED)
+        val sheetName = Utils.getEnumIgnoreCase<Constant.Squad>(args.firstOrNull())?.name?.toLowerCase()
+                ?: throw Exception(SQUAD_NAME_IS_REQUIRED)
         val sheet = workbook.getSheet(sheetName)
         val nickname = args.getOrNull(1)?.toLowerCase()
         val targetDate = args.getOrNull(2)?.toLowerCase() ?: convertDateToString(Date())

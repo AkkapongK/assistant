@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
 import th.co.dv.b2p.linebot.config.LineConfiguration
+import th.co.dv.b2p.linebot.constant.Constant
 import th.co.dv.b2p.linebot.constant.Constant.COMMA
 import th.co.dv.b2p.linebot.constant.INVALID_SUBSCRIBE_NAME
 import th.co.dv.b2p.linebot.constant.INVALID_SUBSCRIBE_TYPE
@@ -28,7 +29,8 @@ class SubscriptionService {
 
     enum class SubscriptionType {
         BROADCASTER,
-        GIT
+        GIT,
+        SQUAD
     }
 
     fun readSubscriptionData(): List<SubscriptionModel> {
@@ -73,6 +75,9 @@ class SubscriptionService {
             }
             SubscriptionType.BROADCASTER -> {
                 SubscriptionType.BROADCASTER.name
+            }
+            SubscriptionType.SQUAD -> {
+                Utils.getEnumIgnoreCase<Constant.Squad>(name)?.name?.toLowerCase()
             }
         } ?: throw Exception(INVALID_SUBSCRIBE_NAME)
     }

@@ -19,6 +19,13 @@ object Constant {
         BROADCAST(listOf("broadcast"))
     }
 
+    enum class Squad {
+        GODZILLA,
+        YODA,
+        EEVEE,
+        SONIC
+    }
+
     enum class Services {
         INV,
         PO,
