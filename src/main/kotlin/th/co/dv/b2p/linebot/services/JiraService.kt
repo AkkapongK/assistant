@@ -52,7 +52,7 @@ class JiraService {
      */
     private fun Mode.completeUrl(value: String, value2: String? = null, startAt: Int = 0, maxResults: Int? = null): String {
         return when (this) {
-            Mode.DEPLOY -> url + URLEncoder.encode(this.key.replace(":scope", value).replace(":env", value2!!), UTF8)
+            Mode.DEPLOY, Mode.DEPLOY2 -> url + URLEncoder.encode(this.key.replace(":scope", value).replace(":env", value2!!), UTF8)
                     .replace(ANDENCODE, AND) + "&startAt=$startAt" + (
                         if (maxResults != null) "&maxResults=$maxResults" else ""
                     )
