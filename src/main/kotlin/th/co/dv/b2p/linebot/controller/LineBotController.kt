@@ -272,12 +272,21 @@ class LineBotController {
             }
             "deploy" -> {
                 val value2 = arg.getOrNull(2) ?: this.replyText(replyToken, JIRA_ENV_NOT_FOUND)
-                val data = jiraService.getInformation(
+                var data = jiraService.getInformation(
                         JiraService.Mode.DEPLOY,
                         value.toString(),
                         value2.toString(),
                         20
                 )
+
+                if (data.isEmpty()) {
+                    data = jiraService.getInformation(
+                            JiraService.Mode.DEPLOY2,
+                            value.toString(),
+                            value2.toString(),
+                            20)
+                }
+
                 when (data.isEmpty()) {
                     true -> this.replyText(replyToken, JIRA_DEPLOY_NOT_FOUND)
                     false -> {
