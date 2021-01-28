@@ -10,3 +10,5 @@ line.bot:
 subscription:
   path: /Users/jittawat.t/Desktop/subscription.csv
 
+friend:
+  path: /Users/jittawat.t/Desktop/friends.csv

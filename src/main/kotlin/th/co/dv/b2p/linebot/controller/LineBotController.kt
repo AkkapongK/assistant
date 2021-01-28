@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import th.co.dv.b2p.linebot.constant.*
 import th.co.dv.b2p.linebot.constant.Constant.PREFIX_SYMBOL
+import th.co.dv.b2p.linebot.model.FriendModel
 import th.co.dv.b2p.linebot.model.LineMessage
 import th.co.dv.b2p.linebot.services.*
 import th.co.dv.b2p.linebot.utilities.Utils.convertToString
@@ -53,6 +54,9 @@ class LineBotController {
     @Autowired
     lateinit var lineMessagingClient: LineMessagingClient
 
+    @Autowired
+    lateinit var friendService: FriendService
+
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     @EventMapping
@@ -91,6 +95,7 @@ class LineBotController {
             Constant.Command.SUBSCRIBE -> processSubscription(replyToken, arg, userId)
             Constant.Command.BROADCAST -> processBroadcast(userId, replyToken, arg)
             Constant.Command.SQUAD -> processSquad(replyToken, arg)
+            Constant.Command.ME -> processMe(userId, replyToken, arg)
             else -> this.replyHelpFlexMessage(replyToken)
         }
     }
@@ -259,6 +264,20 @@ ${it.updated}
             """
         }
         this.replyText(replyToken, outputs.convertToString())
+    }
+
+    /**
+     * Method for process me command
+     */
+    private fun processMe(userId: String, replyToken: String, arg: MutableList<String>) {
+
+        val friend = FriendModel(
+                userId = userId,
+                squad = arg.removeAt(0),
+                name = arg.joinToString(" ")
+        )
+        friendService.updateFriend(friend)
+        this.replyText(replyToken, "Update your data successfully: $friend")
     }
 
     /**

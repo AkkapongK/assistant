@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class SquadUpdatedModel(
-    var date: String? = null ,
+    var date: String? = null,
     var updated: List<UserUpdatedModel> = emptyList()
 )
 

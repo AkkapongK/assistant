@@ -18,6 +18,7 @@ import java.util.*
 class SquadService {
 
     private val updatedFileName = "squad_updated.xlsx"
+
     /**
      * first argument is squad name
      * second argument is nickname (optional: if not have return all)
@@ -129,7 +130,6 @@ class SquadService {
         squadUpdatedModel.updated = userUpdatedModel
         return squadUpdatedModel
     }
-
 
     private fun getValue(currentCell: Cell): String {
         return when {
