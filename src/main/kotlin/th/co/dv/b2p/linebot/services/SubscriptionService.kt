@@ -29,8 +29,7 @@ class SubscriptionService {
 
     enum class SubscriptionType {
         BROADCASTER,
-        GIT,
-        SQUAD
+        GIT
     }
 
     fun readSubscriptionData(): List<SubscriptionModel> {
@@ -75,9 +74,6 @@ class SubscriptionService {
             }
             SubscriptionType.BROADCASTER -> {
                 SubscriptionType.BROADCASTER.name
-            }
-            SubscriptionType.SQUAD -> {
-                Utils.getEnumIgnoreCase<Constant.Squad>(name)?.name?.toLowerCase()
             }
         } ?: throw Exception(INVALID_SUBSCRIBE_NAME)
     }

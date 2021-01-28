@@ -3,7 +3,9 @@ package th.co.dv.b2p.linebot.services
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Row
+import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import th.co.dv.b2p.linebot.constant.Constant
 import th.co.dv.b2p.linebot.constant.SQUAD_NAME_IS_REQUIRED
@@ -16,6 +18,9 @@ import java.util.*
 
 @Service
 class SquadService {
+
+    @Autowired
+    lateinit var friendService: FriendService
 
     private val updatedFileName = "squad_updated.xlsx"
 
@@ -63,6 +68,38 @@ class SquadService {
 
         workbook.close()
         return squadUpdatedsModel
+    }
+
+    fun updateData(userId: String, date: String, data: String) {
+        val user = friendService.getAllFriends().find { it.userId == userId }
+
+        val squad = Utils.getEnumIgnoreCase<Constant.Squad>(user?.squad)?.name?.toLowerCase()
+        val name = user?.name
+
+        if (squad.isNullOrBlank() || name.isNullOrBlank()) throw IllegalArgumentException("Please introduce yourself with command: ME [squad] [name]")
+
+        val existingSquadData = getUpdatedData(squad!!).toMutableList()
+
+        // check if user exists in existing data
+        val users = existingSquadData.firstOrNull()?.updated?.map { it.name!! }?.toMutableList() ?: mutableListOf()
+        if (users.any{ it.equals(name, ignoreCase = true) }) users.add(name!!)
+
+        // get current date data or initialize
+        var squadUpdatedModel = existingSquadData.filterByDate(date)
+
+        if (squadUpdatedModel == null) {
+            squadUpdatedModel = SquadUpdatedModel(date = date, updated = users.map { UserUpdatedModel(name = it) })
+            existingSquadData.add(squadUpdatedModel)
+        }
+
+        // update data for specific date and name
+        squadUpdatedModel.updated.forEach {
+            if (it.name!!.toLowerCase() == name!!.toLowerCase()) { it.updated = data }
+        }
+
+        //
+        println(existingSquadData)
+
     }
 
     /**
