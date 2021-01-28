@@ -25,14 +25,24 @@ class SquadService {
      */
     fun getSquadUpdated(args: List<String>): List<UserUpdatedModel> {
 
-        val excelFile = File(updatedFileName)
-        val workbook = XSSFWorkbook(excelFile)
-
         val sheetName = Utils.getEnumIgnoreCase<Constant.Squad>(args.firstOrNull())?.name?.toLowerCase()
                 ?: throw Exception(SQUAD_NAME_IS_REQUIRED)
-        val sheet = workbook.getSheet(sheetName)
         val nickname = args.getOrNull(1)?.toLowerCase()
         val targetDate = args.getOrNull(2)?.toLowerCase() ?: convertDateToString(Date())
+
+        val squadUpdatedsModel = getUpdatedData(sheetName)
+
+        val targetSquad = squadUpdatedsModel.filterByDate(targetDate)
+        return targetSquad?.getUpdatedData(nickname) ?: emptyList()
+    }
+
+    /**
+     * Method to get and convert updated data to model
+     */
+    private fun getUpdatedData(sheetName: String): List<SquadUpdatedModel> {
+        val excelFile = File(updatedFileName)
+        val workbook = XSSFWorkbook(excelFile)
+        val sheet = workbook.getSheet(sheetName)
 
         val rows = sheet.iterator()
         var currentRowIndex = 0
@@ -51,8 +61,7 @@ class SquadService {
         }
 
         workbook.close()
-        val targetSquad = squadUpdatedsModel.filterByDate(targetDate)
-        return targetSquad?.getUpdatedData(nickname) ?: emptyList()
+        return squadUpdatedsModel
     }
 
     /**
