@@ -51,17 +51,24 @@ class SquadService {
         }
 
         workbook.close()
-        return squadUpdatedsModel.getUpdatedData(targetDate, nickname)
+        val targetSquad = squadUpdatedsModel.filterByDate(targetDate)
+        return targetSquad?.getUpdatedData(nickname) ?: emptyList()
+    }
+
+    /**
+     * Method for filter Squad updated by date
+     */
+    private fun List<SquadUpdatedModel>.filterByDate(date: String): SquadUpdatedModel? {
+        return this.find { it.date == date }
     }
 
     /**
      * Method for get updated data by nickname and date
      */
-    private fun List<SquadUpdatedModel>.getUpdatedData(date: String, nickname: String?): List<UserUpdatedModel> {
-        val dataByDate = this.find { it.date == date } ?: return emptyList()
+    private fun SquadUpdatedModel.getUpdatedData(nickname: String?): List<UserUpdatedModel> {
         return when (nickname != null) {
-            true -> dataByDate.updated.filter { it.name?.toLowerCase() == nickname }
-            false -> dataByDate.updated
+            true -> this.updated.filter { it.name?.toLowerCase() == nickname }
+            false -> this.updated
         }
     }
 
