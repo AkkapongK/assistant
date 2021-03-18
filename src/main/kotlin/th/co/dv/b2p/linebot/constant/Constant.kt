@@ -17,6 +17,7 @@ object Constant {
         SUBSCRIBE(listOf("sub", "subscribe")),
         SQUAD(listOf("sq", "squad")),
         ME(listOf("me")),
+        UPDATE(listOf("update")),
         BROADCAST(listOf("broadcast"))
     }
 

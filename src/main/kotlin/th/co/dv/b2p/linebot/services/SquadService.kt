@@ -82,7 +82,7 @@ class SquadService {
 
         // check if user exists in existing data
         val users = existingSquadData.firstOrNull()?.updated?.map { it.name!! }?.toMutableList() ?: mutableListOf()
-        if (users.any{ it.equals(name, ignoreCase = true) }) users.add(name!!)
+        if (users.any{ it.equals(name, ignoreCase = true) }.not()) users.add(name!!)
 
         // get current date data or initialize
         var squadUpdatedModel = existingSquadData.filterByDate(date)
@@ -94,7 +94,7 @@ class SquadService {
 
         // update data for specific date and name
         squadUpdatedModel.updated.forEach {
-            if (it.name!!.toLowerCase() == name!!.toLowerCase()) { it.updated = data }
+            if (it.name!!.equals(name!!, ignoreCase = true)) { it.updated = data }
         }
 
         //

@@ -17,8 +17,10 @@ import th.co.dv.b2p.linebot.constant.Constant.PREFIX_SYMBOL
 import th.co.dv.b2p.linebot.model.FriendModel
 import th.co.dv.b2p.linebot.model.LineMessage
 import th.co.dv.b2p.linebot.services.*
+import th.co.dv.b2p.linebot.utilities.Utils
 import th.co.dv.b2p.linebot.utilities.Utils.convertToString
 import th.co.dv.b2p.linebot.utilities.Utils.getEnumIgnoreCase
+import java.util.*
 import java.util.concurrent.ExecutionException
 
 @LineMessageHandler
@@ -95,6 +97,7 @@ class LineBotController {
             Constant.Command.SUBSCRIBE -> processSubscription(replyToken, arg, userId)
             Constant.Command.BROADCAST -> processBroadcast(userId, replyToken, arg)
             Constant.Command.SQUAD -> processSquad(replyToken, arg)
+            Constant.Command.UPDATE -> processUpdateSquad(userId, arg)
             Constant.Command.ME -> processMe(userId, replyToken, arg)
             else -> this.replyHelpFlexMessage(replyToken)
         }
@@ -265,6 +268,18 @@ ${it.updated}
         }
         this.replyText(replyToken, outputs.convertToString())
     }
+
+    /**
+     * Method to update task in to member in squad
+     */
+    private fun processUpdateSquad(userId: String, arg: MutableList<String>) {
+        squadService.updateData(
+                userId = userId,
+                date = Utils.convertDateToString(Date()),
+                data = arg.joinToString(" ")
+        )
+    }
+    //updateData
 
     /**
      * Method for process me command
