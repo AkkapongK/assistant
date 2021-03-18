@@ -121,25 +121,37 @@ class SquadService {
         val workbook = WorkbookFactory.create(inputStream)
         val sheet = workbook.getSheet(sheetName)
 
-        val index = if (index == -1) {
+        val finalIndex = if (index == -1) {
             sheet.lastRowNum + 1
         } else index
 
-        val row = sheet.createRow(index)
+        // column
+        var columnCellIndex = 0
+        val columnRow = sheet.createRow(0)
+        var columnCell = columnRow.createCell(columnCellIndex)
+        columnCell.setCellValue("Date")
+        columnCellIndex++
+        squadData.updated.forEach {
+            columnCell = columnRow.createCell(columnCellIndex)
+            columnCell.setCellValue(it.name)
+            columnCellIndex++
+        }
+
+        columnCellIndex++
+
+        val row = sheet.createRow(finalIndex)
 
         // date
         var cellIndex = 0
         var cell = row.createCell(cellIndex)
         cell.setCellValue(squadData.date)
         cellIndex++
+
+
         // member update
         squadData.updated.forEach {
             cell = row.createCell(cellIndex)
             cell.setCellValue(it.updated)
-            val columnHeader = sheet.getRow(0).getCell(cellIndex)
-            if (columnHeader.stringCellValue.isNullOrEmpty()) {
-                columnHeader.setCellValue(it.name)
-            }
             cellIndex++
         }
         inputStream.close()
