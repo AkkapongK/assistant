@@ -6,6 +6,8 @@ import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
 import th.co.dv.b2p.linebot.constant.Constant
 import th.co.dv.b2p.linebot.constant.SQUAD_NAME_IS_REQUIRED
@@ -22,7 +24,8 @@ class SquadService {
     @Autowired
     lateinit var friendService: FriendService
 
-    private val updatedFileName = "squad_updated.xlsx"
+    @Autowired
+    lateinit var squadConfiguration: SquadConfiguration
 
     /**
      * first argument is squad name
@@ -46,7 +49,7 @@ class SquadService {
      * Method to get and convert updated data to model
      */
     private fun getUpdatedData(sheetName: String): List<SquadUpdatedModel> {
-        val excelFile = File(updatedFileName)
+        val excelFile = File(squadConfiguration.path)
         val workbook = XSSFWorkbook(excelFile)
         val sheet = workbook.getSheet(sheetName)
 
@@ -175,3 +178,9 @@ class SquadService {
         }
     }
 }
+
+@Configuration
+@ConfigurationProperties("squad")
+data class SquadConfiguration(
+        var path: String? = null
+)

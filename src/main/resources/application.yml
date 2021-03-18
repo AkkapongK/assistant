@@ -12,3 +12,6 @@ subscription:
 
 friend:
   path: /Users/jittawat.t/Desktop/friends.csv
+
+squad:
+  path: /Users/jittawat.t/Desktop/squad_updated.xlsx
