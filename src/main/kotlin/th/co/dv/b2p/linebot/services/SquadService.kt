@@ -40,7 +40,8 @@ class SquadService {
         val targetDate = args.getOrNull(2)?.toLowerCase() ?: convertDateToString(Date())
 
         val squadUpdatedsModel = getUpdatedData(sheetName)
-
+        println("getSquadUpdated squadUpdatedsModel >>>>>> $squadUpdatedsModel")
+        println("getSquadUpdated targetDate >>>>>> $targetDate")
         val targetSquad = squadUpdatedsModel.filterByDate(targetDate)
         return targetSquad?.getUpdatedData(nickname) ?: emptyList()
     }

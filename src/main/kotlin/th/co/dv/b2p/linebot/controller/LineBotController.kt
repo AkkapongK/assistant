@@ -267,7 +267,7 @@ class LineBotController {
 ${it.updated}
             """
         }
-        this.replyText(replyToken, outputs.convertToString())
+        if (outputs.isNotEmpty()) this.replyText(replyToken, outputs.convertToString())
     }
 
     /**
