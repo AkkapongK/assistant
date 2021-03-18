@@ -261,6 +261,7 @@ class LineBotController {
      */
     private fun processSquad(replyToken: String, arg: MutableList<String>) {
         val userUpdateds = squadService.getSquadUpdated(arg)
+        println(">>>>>>> $userUpdateds")
         val outputs = userUpdateds.map {
             """${it.name} : 
 ${it.updated}
