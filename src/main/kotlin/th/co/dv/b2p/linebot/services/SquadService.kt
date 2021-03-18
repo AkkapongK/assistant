@@ -3,7 +3,7 @@ package th.co.dv.b2p.linebot.services
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Row
-import org.apache.poi.xssf.usermodel.XSSFSheet
+import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -16,7 +16,10 @@ import th.co.dv.b2p.linebot.model.UserUpdatedModel
 import th.co.dv.b2p.linebot.utilities.Utils
 import th.co.dv.b2p.linebot.utilities.Utils.convertDateToString
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.util.*
+
 
 @Service
 class SquadService {
@@ -43,7 +46,7 @@ class SquadService {
         println("getSquadUpdated squadUpdatedsModel >>>>>> $squadUpdatedsModel")
         println("getSquadUpdated targetDate >>>>>> $targetDate")
         val targetSquad = squadUpdatedsModel.filterByDate(targetDate)
-        return targetSquad?.getUpdatedData(nickname) ?: emptyList()
+        return targetSquad?.second?.getUpdatedData(nickname) ?: emptyList()
     }
 
     /**
@@ -89,11 +92,15 @@ class SquadService {
         if (users.any{ it.equals(name, ignoreCase = true) }.not()) users.add(name!!)
 
         // get current date data or initialize
-        var squadUpdatedModel = existingSquadData.filterByDate(date)
+        val squadUpdatedModelWithIndex = existingSquadData.filterByDate(date)
+        val index = squadUpdatedModelWithIndex?.first ?: -1
+        var squadUpdatedModel = squadUpdatedModelWithIndex?.second
 
         if (squadUpdatedModel == null) {
             squadUpdatedModel = SquadUpdatedModel(date = date, updated = users.map { UserUpdatedModel(name = it) })
             existingSquadData.add(squadUpdatedModel)
+        } else {
+            existingSquadData.remove(squadUpdatedModel)
         }
 
         // update data for specific date and name
@@ -101,16 +108,55 @@ class SquadService {
             if (it.name!!.equals(name!!, ignoreCase = true)) { it.updated = data }
         }
 
-        //
+        existingSquadData.add(squadUpdatedModel)
         println(existingSquadData)
+        saveData(squad, squadUpdatedModel, index)
+    }
 
+    /**
+     * Method to update data into file
+     */
+    private fun saveData(sheetName: String, squadData: SquadUpdatedModel, index: Int) {
+        val inputStream = FileInputStream(File(squadConfiguration.path))
+        val workbook = WorkbookFactory.create(inputStream)
+        val sheet = workbook.getSheet(sheetName)
+
+        val index = if (index == -1) {
+            sheet.lastRowNum + 1
+        } else index
+
+        val row = sheet.createRow(index)
+
+        // date
+        var cellIndex = 0
+        var cell = row.createCell(cellIndex)
+        cell.setCellValue(squadData.date)
+        cellIndex++
+        // member update
+        squadData.updated.forEach {
+            cell = row.createCell(cellIndex)
+            cell.setCellValue(it.updated)
+            val columnHeader = sheet.getRow(0).getCell(cellIndex)
+            if (columnHeader.stringCellValue.isNullOrEmpty()) {
+                columnHeader.setCellValue(it.name)
+            }
+            cellIndex++
+        }
+        inputStream.close()
+
+        val outputStream = FileOutputStream(squadConfiguration.path)
+        workbook.write(outputStream)
+        workbook.close()
+        outputStream.close()
     }
 
     /**
      * Method for filter Squad updated by date
      */
-    private fun List<SquadUpdatedModel>.filterByDate(date: String): SquadUpdatedModel? {
-        return this.find { it.date == date }
+    private fun List<SquadUpdatedModel>.filterByDate(date: String): Pair<Int, SquadUpdatedModel>? {
+        val target = this.find { it.date == date } ?: return null
+        val index = this.indexOf(target)
+        return index to target
     }
 
     /**
