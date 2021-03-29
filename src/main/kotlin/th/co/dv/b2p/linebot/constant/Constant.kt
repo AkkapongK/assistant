@@ -4,6 +4,7 @@ object Constant {
 
     const val PREFIX_SYMBOL = "THB_"
     const val COLON = ":"
+    const val STAR = "*"
     const val COMMA = ","
     const val NOT_DEPLOY = "NOT-DEPLOY"
     enum class Command(val key: List<String>) {
@@ -18,6 +19,7 @@ object Constant {
         SQUAD(listOf("sq", "squad")),
         ME(listOf("me")),
         UPDATE(listOf("update")),
+        MASTER_UPDATE(listOf("mu", "masterupdate")),
         BROADCAST(listOf("broadcast"))
     }
 

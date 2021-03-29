@@ -77,6 +77,22 @@ class SquadService {
         return squadUpdatedsModel
     }
 
+    /**
+     * Method for master member update task for other member
+     */
+    fun masterUpdateData(masterId: String, member: String, date: String, data: String) {
+        // validate master id
+        val master = friendService.findFriendById(masterId)?.isMaster
+        if (master != true) return
+        // find user id from member name
+        val user = friendService.findFriendByName(member)?: return
+        // call updateData
+        updateData(
+            userId = user.userId!!,
+            date = convertDateToString(Date()),
+            data = data)
+    }
+
     fun updateData(userId: String, date: String, data: String) {
         val user = friendService.getAllFriends().find { it.userId == userId }
 

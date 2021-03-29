@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Service
+import th.co.dv.b2p.linebot.constant.Constant.STAR
 import th.co.dv.b2p.linebot.model.FriendModel
 import java.io.BufferedWriter
 import java.io.File
@@ -22,6 +23,20 @@ class FriendService {
      */
     fun getAllFriends(): List<FriendModel> {
         return readFriendData()
+    }
+
+    /**
+     * Method for find friend by id
+     */
+    fun findFriendById(userId: String): FriendModel? {
+        return getAllFriends().find { it.userId == userId }
+    }
+
+    /**
+     * Method to find user by name
+     */
+    fun findFriendByName(userName: String): FriendModel ? {
+        return getAllFriends().find { it.name.equals(userName, ignoreCase = true) }
     }
 
     /**
@@ -44,7 +59,8 @@ class FriendService {
             FriendModel(
                     userId = data[0],
                     name = data[1],
-                    squad = data[2]
+                    squad = data[2],
+                    isMaster = (data[3] == STAR)
             )
         }
     }

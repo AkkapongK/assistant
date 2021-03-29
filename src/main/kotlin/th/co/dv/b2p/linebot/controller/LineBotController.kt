@@ -98,6 +98,7 @@ class LineBotController {
             Constant.Command.BROADCAST -> processBroadcast(userId, replyToken, arg)
             Constant.Command.SQUAD -> processSquad(replyToken, arg)
             Constant.Command.UPDATE -> processUpdateSquad(userId, arg)
+            Constant.Command.MASTER_UPDATE -> processMasterUpdateSquad(userId, arg)
             Constant.Command.ME -> processMe(userId, replyToken, arg)
             else -> this.replyHelpFlexMessage(replyToken)
         }
@@ -280,7 +281,19 @@ ${it.updated}
                 data = arg.joinToString(" ")
         )
     }
-    //updateData
+
+    /**
+     * Method that master member used to update task in to member in squad
+     */
+    private fun processMasterUpdateSquad(userId: String, arg: MutableList<String>) {
+        val member = arg.removeAt(0)
+        squadService.masterUpdateData(
+            masterId = userId,
+            member = member,
+            date = Utils.convertDateToString(Date()),
+            data = arg.joinToString(" ")
+        )
+    }
 
     /**
      * Method for process me command
