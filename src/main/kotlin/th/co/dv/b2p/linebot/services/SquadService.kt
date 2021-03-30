@@ -43,8 +43,6 @@ class SquadService {
         val targetDate = args.getOrNull(2)?.toLowerCase() ?: convertDateToString(Date())
 
         val squadUpdatedsModel = getUpdatedData(sheetName)
-        println("getSquadUpdated squadUpdatedsModel >>>>>> $squadUpdatedsModel")
-        println("getSquadUpdated targetDate >>>>>> $targetDate")
         val targetSquad = squadUpdatedsModel.filterByDate(targetDate)
         return targetSquad?.second?.getUpdatedData(nickname) ?: emptyList()
     }
@@ -83,12 +81,9 @@ class SquadService {
     fun masterUpdateData(masterId: String, member: String, date: String, data: String) {
         // validate master id
         val master = friendService.findFriendById(masterId)
-        println("master: $master")
         if (master?.isMaster != true) return
         // find user id from member name
         val user = friendService.findFriendByName(member, master.squad?: "")?: return
-        println("user: $user")
-        println("data: $data")
         // call updateData
         updateData(
             userId = user.userId!!,

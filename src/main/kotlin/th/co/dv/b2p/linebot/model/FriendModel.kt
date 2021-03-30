@@ -7,7 +7,7 @@ data class FriendModel (
     val isMaster: Boolean = false
 ) {
     override fun toString(): String {
-        return "Name: $name, Squad: $squad"
+        return "Name: $name, Squad: $squad, isMaster: $isMaster"
     }
 }
 

@@ -36,9 +36,6 @@ class FriendService {
      * Method to find user by name
      */
     fun findFriendByName(userName: String, squad: String): FriendModel ? {
-        println("userName: $userName")
-        val allFriends = getAllFriends()
-        println("allFriends: $allFriends")
         return getAllFriends().find { it.name.equals(userName, ignoreCase = true) && it.squad.equals(squad, ignoreCase = true)}
     }
 
