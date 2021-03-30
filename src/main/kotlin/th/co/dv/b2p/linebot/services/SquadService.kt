@@ -83,9 +83,12 @@ class SquadService {
     fun masterUpdateData(masterId: String, member: String, date: String, data: String) {
         // validate master id
         val master = friendService.findFriendById(masterId)?.isMaster
+        println("master: $master")
         if (master != true) return
         // find user id from member name
         val user = friendService.findFriendByName(member)?: return
+        println("user: $user")
+        println("data: $data")
         // call updateData
         updateData(
             userId = user.userId!!,
