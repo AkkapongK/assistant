@@ -108,25 +108,26 @@ class SquadService {
 
         // get current date data or initialize
         println("existingSquadData : $existingSquadData")
+        println("date : $date")
         val squadUpdatedModelWithIndex = existingSquadData.filterByDate(date)
         println("squadUpdatedModelWithIndex : $squadUpdatedModelWithIndex")
         val index = squadUpdatedModelWithIndex?.first ?: -1
-        var squadUpdatedModel = squadUpdatedModelWithIndex?.second
+        val squadUpdatedModel = squadUpdatedModelWithIndex?.second ?: SquadUpdatedModel(date = date, updated = users.map { UserUpdatedModel(name = it) })
 
-        if (squadUpdatedModel == null) {
-            squadUpdatedModel = SquadUpdatedModel(date = date, updated = users.map { UserUpdatedModel(name = it) })
-            existingSquadData.add(squadUpdatedModel)
-        } else {
-            existingSquadData.remove(squadUpdatedModel)
-        }
+//        if (squadUpdatedModel == null) {
+//            squadUpdatedModel = SquadUpdatedModel(date = date, updated = users.map { UserUpdatedModel(name = it) })
+//            existingSquadData.add(squadUpdatedModel)
+//        } else {
+//            existingSquadData.remove(squadUpdatedModel)
+//        }
 
         // update data for specific date and name
         squadUpdatedModel.updated.forEach {
             if (it.name!!.equals(name!!, ignoreCase = true)) { it.updated = data }
         }
 
-        existingSquadData.add(squadUpdatedModel)
-        println(existingSquadData)
+//        existingSquadData.add(squadUpdatedModel)
+        println("squadUpdatedModel : $squadUpdatedModel")
         saveData(squad, squadUpdatedModel, index)
     }
 

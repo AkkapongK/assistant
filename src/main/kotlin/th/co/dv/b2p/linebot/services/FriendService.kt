@@ -58,8 +58,8 @@ class FriendService {
             val data = it.split(fieldSeparator)
             FriendModel(
                     userId = data[0],
-                    name = data[1],
-                    squad = data[2],
+                    name = data[1].toLowerCase(),
+                    squad = data[2].toLowerCase(),
                     isMaster = (data[3] == STAR)
             )
         }
