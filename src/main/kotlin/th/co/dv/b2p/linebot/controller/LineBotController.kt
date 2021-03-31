@@ -303,7 +303,8 @@ ${it.updated}
         val friend = FriendModel(
                 userId = userId,
                 squad = arg.removeAt(0),
-                name = arg.joinToString(" ")
+                name = arg.joinToString(" "),
+                isMaster = false
         )
         friendService.updateFriend(friend)
         this.replyText(replyToken, "Update your data successfully: $friend")

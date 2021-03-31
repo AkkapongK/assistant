@@ -87,7 +87,7 @@ class FriendService {
     }
 
     private fun FriendModel.toFileFormat(): String {
-        return "${this.userId}${fieldSeparator}${this.name}${fieldSeparator}${this.squad}"
+        return "${this.userId}${fieldSeparator}${this.name}${fieldSeparator}${this.squad}${fieldSeparator}${if (this.isMaster) STAR else ""}"
     }
 }
 
