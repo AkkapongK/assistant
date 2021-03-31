@@ -97,6 +97,8 @@ class SquadService {
 
         val squad = Utils.getEnumIgnoreCase<Constant.Squad>(user?.squad)?.name?.toLowerCase()
         val name = user?.name
+        println("squad : $squad")
+        println("user : $user")
 
         if (squad.isNullOrBlank() || name.isNullOrBlank()) throw IllegalArgumentException("Please introduce yourself with command: ME [squad] [name]")
 
