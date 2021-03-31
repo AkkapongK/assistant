@@ -42,7 +42,8 @@ class SquadService {
         val nickname = args.getOrNull(1)?.toLowerCase()
         val targetDate = args.getOrNull(2)?.toLowerCase() ?: convertDateToString(Date())
 
-        val squadUpdatedsModel = getUpdatedData(sheetName)
+        val squadUpdatedsModel =
+            getUpdatedData(sheetName)
         val targetSquad = squadUpdatedsModel.filterByDate(targetDate)
         return targetSquad?.second?.getUpdatedData(nickname) ?: emptyList()
     }
@@ -221,6 +222,7 @@ class SquadService {
      * Get user
      */
     private fun getUpdatedData(row: Row, user: Map<Int, String>): SquadUpdatedModel {
+        println("getUpdatedData user: $user")
         val squadUpdatedModel = SquadUpdatedModel()
         val cellsInRow = row.iterator()
         val userUpdatedModel = mutableListOf<UserUpdatedModel>()
