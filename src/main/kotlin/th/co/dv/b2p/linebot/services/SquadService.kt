@@ -133,7 +133,10 @@ class SquadService {
 
         }.toMutableList()
 
-        if (isUpdated.not()) updatedList.add(UserUpdatedModel(name = name))
+        if (isUpdated.not()) {
+            updatedList.add(UserUpdatedModel(name = name))
+            squadUpdatedModel.updated = updatedList
+        }
 
 //        existingSquadData.add(squadUpdatedModel)
         println("squadUpdatedModel : $squadUpdatedModel")
