@@ -106,7 +106,9 @@ class SquadService {
         if (users.any{ it.equals(name, ignoreCase = true) }.not()) users.add(name!!)
 
         // get current date data or initialize
+        println("existingSquadData : $existingSquadData")
         val squadUpdatedModelWithIndex = existingSquadData.filterByDate(date)
+        println("squadUpdatedModelWithIndex : $squadUpdatedModelWithIndex")
         val index = squadUpdatedModelWithIndex?.first ?: -1
         var squadUpdatedModel = squadUpdatedModelWithIndex?.second
 
