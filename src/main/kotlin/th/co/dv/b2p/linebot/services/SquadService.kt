@@ -124,9 +124,16 @@ class SquadService {
 //        }
 
         // update data for specific date and name
-        squadUpdatedModel.updated.forEach {
-            if (it.name!!.equals(name!!, ignoreCase = true)) { it.updated = data }
-        }
+        var isUpdated = false
+        val updatedList = squadUpdatedModel.updated.map {
+            if (it.name!!.equals(name!!, ignoreCase = true)) {
+                isUpdated = true
+                it.updated = data }
+            it
+
+        }.toMutableList()
+
+        if (isUpdated.not()) updatedList.add(UserUpdatedModel(name = name))
 
 //        existingSquadData.add(squadUpdatedModel)
         println("squadUpdatedModel : $squadUpdatedModel")
