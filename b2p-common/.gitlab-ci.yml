@@ -1,0 +1,45 @@
+image: docker:stable
+
+stages:
+  - build
+  - test
+  - buildDocker
+
+before_script:
+  - echo `pwd` # debug
+  - echo "$CI_BUILD_NAME, $CI_BUILD_REF_NAME $CI_BUILD_STAGE" # debug
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+
+cache:
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+
+# ------------------------ TEST ------------------------
+# This is always triggered in master and branch that start with 'release-'
+test:trigger:
+  image: openjdk:17-jdk-alpine3.14
+  stage: test
+  script:
+    - echo "$CI_BUILD_NAME, $CI_BUILD_REF_NAME $CI_BUILD_STAGE"
+    - echo "This is just entry point to running the test."
+    - ./gradlew clean test
+  retry: 1
+  only:
+    - master
+    - /^release-.*$/
+
+# This is manually triggered for all other branches
+test:trigger:manual:
+  image: openjdk:17-jdk-alpine3.14
+  stage: test
+  script:
+    - echo "$CI_BUILD_NAME, $CI_BUILD_REF_NAME $CI_BUILD_STAGE"
+    - echo "This is just entry point to running the test."
+    - ./gradlew clean test
+  when: manual
+  allow_failure: false
+  except:
+    - tags
+    - master
+    - /^release-.*$/

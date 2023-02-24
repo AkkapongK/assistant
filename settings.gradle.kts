@@ -11,4 +11,6 @@ pluginManagement {
         }
     }
 }
-rootProject.name = "line-bot"
+rootProject.name = "user-notify"
+include("b2p-common")
+project(":b2p-common")

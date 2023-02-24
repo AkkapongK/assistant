@@ -1,0 +1,19 @@
+version: "3"
+
+networks:
+  mynetwork:
+    external:
+      name: ms-service_mynetwork
+
+services:
+  creditnote:
+    build:
+      context: ../
+      dockerfile: docker/usernotify/Dockerfile
+    container_name: usernotify
+    ports:
+      - "10550:10550"
+    tty: true
+    command: java -jar /opt/app/usernotify.jar --spring.config.location=/opt/app/application.yml >> /var/log/usernotify.log
+    networks:
+      - mynetwork

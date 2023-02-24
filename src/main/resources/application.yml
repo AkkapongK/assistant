@@ -1,17 +1,111 @@
+server:
+  port: 10550
+
+security:
+  oauth2:
+    resource:
+      userInfoUri: http://localhost:10052/user
+
+spring:
+  main.allow-bean-definition-overriding: true
+  redis:
+    host: localhost
+    port: 6379
+#  datasource:
+#    url: jdbc:sqlserver://localhost:1433;database=master;
+#    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+#    username: sa
+#    password: reallyStrongPwd123
+#  redis:
+#    host: localhost
+#    port: 6379
+#  output:
+#    ansi:
+#      enabled: ALWAYS
+#  liquibase:
+#    enabled: false
+#  jpa:
+#    database-platform: org.hibernate.dialect.SQLServer2012Dialect
+#    properties:
+#      hibernate.hbm2ddl.auto: none
+#      hibernate.default_schema: master
+#      hibernate.enable_lazy_load_no_trans: true
+#    show-sql: true
+#  flyway:
+#    enabled: true
+#    validateOnMigrate: false
+#    schemas: master
+#    baselineOnMigrate: true
+#  batch:
+#    initialize-schema: always
+#    job:
+#      enabled: false
+#  rabbitmq:
+#    internal:
+#      host: 10.42.27.5
+#      port: 5672
+#      username: admin
+#      password: P2PDig1talVenture$
+#      enabled: false
+#    external:
+#      host: 10.42.27.5
+#      port: 5672
+#      username: admin
+#      password: P2PDig1talVenture$
+
+logging:
+  level:
+    th.co.dv: INFO
+    org.hibernate.SQL: DEBUG
+
+kafka:
+  enabled: false
+  streamingHost: localhost:9092
+  role: BUYER
+  maxMessageSize: 15728640
+  maxBlockMs: 600000
+  bufferMemory: 64108864
+  lingerMs: 20
+  batchSize: 32768
+  compressionType: producer
+  enableIdempotence: false
+  ack: 1
+  retries: 2147483647
+  requestTimeout: 30000
+  maxInFlightRequestsPerConnection: 5
+  fetchMaxBytes: 52428800
+  fetchMinBytes: 1
+  sessionTimeOut: 10000
+  maxPartitionFetchByteConfig: 1048576
+
+retry:
+  retryPeriod: 3000
+  maxRetryCount: 3
+
+auth:
+  accessTokenUri: https://login.microsoftonline.com/a62639a2-1dd8-400f-948d-3789b109f57c/oauth2/token
+  clientId: a6ea6e91-91aa-40ee-ad3f-9f1d241de79d
+  clientSecret: Z_mPLCmz3j5ao2~E_K2QbXo~mf17eJE8qP
+  timeout: 180
+  expiryThreshold: 5
+
+swagger:
+  enabled: true
+  accessTokenUri: https://login.microsoftonline.com/2975daf5-f038-4105-90c8-9d1c5fbdcfeb/oauth2/token
+
+user-service:
+  endpoint: http://localhost:10052/api/v1
+  interfacePath:
+    user: /user
+    user-authorization: /user/
+
+invoice:
+  endpoint: http://localhost:10099/api/v1
+  interfacePath:
+    invoice: /invoices
+
 line.bot:
-  channel-token: 'cwJTpfEgbIGRszTR2bhMH/a+yqyU0QhjD5OzJ6CDlS5BzZ47u/zol4uIocku9wAQSkMSOrnEsE2chVEJt5VL7hwlZy9chRDSUXLdPiXpLK2L4T7dzrHMYsSUWglXW7SEhyHW/yKaoIWNaEqStZV3UAdB04t89/1O/w1cDnyilFU='
-  channel-secret: 'f48eaac5b0fbb026c66ebd9a4dd1961b'
+  channel-token: 'M8ZzRr91Lg6JjtszJ9GuCm3u/pjGB3Ge/S+LqS5JG43xLIpR51TlEEI/29q9Clw8eIkUbt0aNAuQt8UNzwj4SrHI/TQExuEt3kf3KB8Vtz7VDWgfuQfBCJ9/HwD0mWCytz5h1P3TkEGSESBhZdw2LwdB04t89/1O/w1cDnyilFU='
+  channel-secret: 'e6c5c4981e3680b5c09c6af704d63bc1'
   handler.path: /callback
   baseUrl: https://api.line.me/v2/
-  broadcaster:
-    OAT: Ud6ea1a3aaf44201a7ab7ee1e500f2d79
-    OHM: U080295aaad0b3bcb412ff0b82093c61b
-
-subscription:
-  path: /Users/jittawat.t/Desktop/subscription.csv
-
-friend:
-  path: /Users/jittawat.t/Desktop/friends.csv
-
-squad:
-  path: /Users/jittawat.t/Desktop/squad_updated.xlsx
