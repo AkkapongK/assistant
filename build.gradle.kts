@@ -160,11 +160,11 @@ tasks.withType<Test> {
 	}
 }
 
-tasks.withType<Jar> {
-	manifest {
-		attributes["Main-Class"] = "th.co.dv.p2p.usernotify.Application"
-	}
-}
+//tasks.withType<Jar> {
+//	manifest {
+//		attributes["Main-Class"] = "th.co.dv.p2p.usernotify.Application"
+//	}
+//}
 
 tasks.cpdCheck {
 	reports {
