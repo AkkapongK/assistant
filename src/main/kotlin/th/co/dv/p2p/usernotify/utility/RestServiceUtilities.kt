@@ -1,9 +1,5 @@
-package th.co.dv.p2p.common.utilities
+package th.co.dv.p2p.usernotify.utility
 
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import th.co.dv.p2p.common.exceptions.ExternalServiceException
-import th.co.dv.p2p.common.models.ResponseModel
 import java.time.Instant
 
 /**
@@ -37,19 +33,5 @@ object RestServiceUtilities {
         return expiryEpochSecond <= expectedExpiryDate
     }
 
-    /**
-     * Method for handle response after got the response
-     */
-    fun <T: Any>handleRequestResult(sendRequest:() -> ResponseEntity<ResponseModel<T>>): ResponseModel<T> {
-        val result = try {
-            sendRequest().body!!
-        } catch (e: Exception) {
-            throw ExternalServiceException(e.message, e)
-        }
 
-        if (HttpStatus.valueOf(result.statusCode!!).is2xxSuccessful.not()) {
-            throw ExternalServiceException("[${result.error!!.code}] ${result.error.message}", null)
-        }
-        return result
-    }
 }

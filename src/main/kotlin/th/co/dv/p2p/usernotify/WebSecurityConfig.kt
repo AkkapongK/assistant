@@ -1,8 +1,5 @@
 package th.co.dv.p2p.usernotify
 
-import org.springframework.boot.autoconfigure.security.oauth2.resource.FixedAuthoritiesExtractor
-import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor
-import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoRestTemplateCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
@@ -13,8 +10,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import th.co.dv.p2p.common.utilities.AuthorizationUtils
-import th.co.dv.p2p.usernotify.config.UserInfoRestTemplateInterceptor
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -43,28 +38,6 @@ class WebSecurityConfig : ResourceServerConfigurerAdapter() {
         return source
     }
 
-    // TODO: Can remove if don't want to build UserAuthorization
-    @Bean
-    fun myPrincipalExtractor(): PrincipalExtractor {
-        return MyPrincipalExtractor()
-    }
 
-    @Bean
-    fun userInfoRestTemplate(): UserInfoRestTemplateCustomizer {
-        return UserInfoRestTemplateCustomizer { template ->
-            template.interceptors.add(UserInfoRestTemplateInterceptor())
-        }
-    }
 }
 
-// TODO: Can remove if don't want to build UserAuthorization
-class MyPrincipalExtractor : PrincipalExtractor {
-
-    override fun extractPrincipal(map: Map<String, Any>): Any {
-        //Extracts the authorities from the map with the a key
-        val authoritiesExtracted = FixedAuthoritiesExtractor().extractAuthorities(map).map { it.authority }
-
-        return AuthorizationUtils.buildUserAuthorization(map, authoritiesExtracted)
-
-    }
-}

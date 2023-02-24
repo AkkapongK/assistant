@@ -8,17 +8,14 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
-import th.co.dv.p2p.common.utilities.RequestUtility
-import th.co.dv.p2p.common.utilities.RestServiceUtilities
-import th.co.dv.p2p.common.utilities.RestServiceUtilities.ACCESS_TOKEN
-import th.co.dv.p2p.common.utilities.RestServiceUtilities.CLIENT_CREDENTIAL
-import th.co.dv.p2p.common.utilities.RestServiceUtilities.EXPIRES_ON
-import th.co.dv.p2p.common.utilities.RestServiceUtilities.HEADER_AUTHORIZATION
-import th.co.dv.p2p.common.utilities.RestServiceUtilities.buildAuthorizationHeader
-import th.co.dv.p2p.common.utilities.RestServiceUtilities.isTokenExpired
-import th.co.dv.p2p.common.utilities.SponsorContextHolder
 import th.co.dv.p2p.usernotify.config.ApiErrorHandler
 import th.co.dv.p2p.usernotify.config.AuthenticationProperties
+import th.co.dv.p2p.usernotify.utility.RestServiceUtilities.ACCESS_TOKEN
+import th.co.dv.p2p.usernotify.utility.RestServiceUtilities.CLIENT_CREDENTIAL
+import th.co.dv.p2p.usernotify.utility.RestServiceUtilities.EXPIRES_ON
+import th.co.dv.p2p.usernotify.utility.RestServiceUtilities.HEADER_AUTHORIZATION
+import th.co.dv.p2p.usernotify.utility.RestServiceUtilities.buildAuthorizationHeader
+import th.co.dv.p2p.usernotify.utility.RestServiceUtilities.isTokenExpired
 import java.net.URI
 import java.time.Duration
 import java.util.concurrent.TimeUnit
@@ -103,7 +100,6 @@ class RestService {
 
         val restTemplate = buildRestTemplate(authenticationProperties)
         val finalHttpEntity = buildHttpRequestWithToken(requestEntity, enforceServiceAccessToken)
-            .addSponsorHeader()
 
         return restTemplate.exchange(
             url,
@@ -126,7 +122,6 @@ class RestService {
 
         val restTemplate = buildRestTemplate(authenticationProperties)
         val finalHttpEntity = buildHttpRequestWithToken(requestEntity, enforceServiceAccessToken)
-            .addSponsorHeader()
 
         return restTemplate.exchange(
             url,
@@ -144,7 +139,7 @@ class RestService {
         requestEntity: HttpEntity<T>?,
         enforceServiceAccessToken: Boolean
     ): HttpEntity<T?> {
-        val accessToken = getAccessToken(enforceServiceAccessToken)
+        val accessToken = null
         val authorizationHeader = buildAuthorizationHeader(accessToken)
         val headers = HttpHeaders.writableHttpHeaders(requestEntity?.headers ?: HttpHeaders())
         authorizationHeader?.let { headers.add(HEADER_AUTHORIZATION, it) }
@@ -152,22 +147,6 @@ class RestService {
         return HttpEntity(requestEntity?.body, headers)
     }
 
-
-    /**
-     * Method to get access token
-     *
-     * @param enforceServiceAccessToken : flag for enforce service access token
-     */
-    private fun getAccessToken(enforceServiceAccessToken: Boolean): String? {
-        if (enforceServiceAccessToken) return getServiceAccessToken()
-
-        return try {
-            RequestUtility.getCurrentRequest().getHeader(HEADER_AUTHORIZATION)
-        } catch (ex: Exception) {
-            // If current process is not request (event listener), build token
-            getServiceAccessToken()
-        }
-    }
 
     /**
      * Method for get service access token and save new authorization for check expire
@@ -210,13 +189,4 @@ class RestService {
         return response
     }
 
-    /**
-     * Method for add header sponsor by getting sponsor from context holder
-     */
-    private fun <T> HttpEntity<T>.addSponsorHeader(): HttpEntity<T> {
-        val sponsor = SponsorContextHolder.getCurrentSponsor()
-        val headers = HttpHeaders.writableHttpHeaders(this.headers)
-        sponsor?.let { headers.add(RestServiceUtilities.HEADER_SPONSOR, it) }
-        return HttpEntity(this.body, headers)
-    }
 }

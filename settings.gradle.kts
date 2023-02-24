@@ -12,5 +12,5 @@ pluginManagement {
     }
 }
 rootProject.name = "user-notify"
-include("b2p-common")
-project(":b2p-common")
+//include("b2p-common")
+//project(":b2p-common")

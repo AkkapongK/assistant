@@ -107,8 +107,8 @@ dependencies {
 	testImplementation("junit:junit:4.13.2")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.5.31")
 
-	// including sub-project
-	implementation(project(":b2p-common"))
+//	// including sub-project
+//	implementation(project(":b2p-common"))
 
 	//upgrade log4j CVE-2021-44228
 	implementation("org.apache.logging.log4j:log4j-core:2.17.1")
@@ -173,8 +173,7 @@ tasks.cpdCheck {
 	}
 
 	val main = fileTree("src/main/kotlin")
-	val common = fileTree("b2p-common/src/main/kotlin")
-	source = main + common
+	source = main
 }
 
 subprojects {

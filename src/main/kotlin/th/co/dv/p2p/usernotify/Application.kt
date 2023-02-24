@@ -8,9 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.builder.SpringApplicationBuilder
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.retry.annotation.EnableRetry
-import th.co.dv.p2p.usernotify.repository.CustomJpaRepositoryFactoryBean
 
 @SpringBootApplication
 //@EnableJpaRepositories(basePackages = ["th.co.dv.p2p.usernotify.repository"],
