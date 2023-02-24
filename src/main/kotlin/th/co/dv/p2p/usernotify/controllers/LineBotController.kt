@@ -15,6 +15,7 @@ import com.linecorp.bot.spring.boot.annotation.LineMessageHandler
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -36,6 +37,9 @@ class LineBotController {
     @Autowired
     lateinit var restService: RestService
 
+    @Value("\${chat.apiKey:xxx}")
+    private var apiKey: String = "XXXX"
+
     @EventMapping
     fun handleTextMessage(event: MessageEvent<TextMessageContent>) {
         logger.info("$className.handleTextMessage")
@@ -45,7 +49,6 @@ class LineBotController {
     }
 
     fun getHeader(): HttpHeaders {
-        val apiKey = "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"
         val headers = HttpHeaders()
         headers.set(HttpHeaders.AUTHORIZATION, "Bearer $apiKey")
         headers.set(HttpHeaders.CONTENT_TYPE, "application/json")
