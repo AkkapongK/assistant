@@ -15,10 +15,10 @@ logging:
 
 
 line.bot:
-  channel-token: '${LINE_TOKEN}'
-  channel-secret: '${LINE_SECRET}'
+  channel-token: ${LINE_TOKEN}
+  channel-secret: ${LINE_SECRET}
   handler.path: /callback
   baseUrl: https://api.line.me/v2/
 
 chat:
-  apiKey: '${CHAT_API_KEY}'
+  apiKey: ${CHAT_API_KEY}
