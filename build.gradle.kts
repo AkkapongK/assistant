@@ -33,7 +33,7 @@ repositories {
 	mavenCentral()
 	jcenter()
 	maven { url = uri("https://plugins.gradle.org/m2/") }
-	maven { url = uri("https://software.r3.com/artifactory/corda") }
+//	maven { url = uri("https://software.r3.com/artifactory/corda") }
 }
 configurations.all {
 	resolutionStrategy {
@@ -84,7 +84,7 @@ dependencies {
 	implementation("org.springframework.data:spring-data-redis:2.5.11")
 
 	// corda libs
-	implementation("net.corda:corda-rpc:4.4")
+//	implementation("net.corda:corda-rpc:4.4")
 
 	// Spring Cloud
 	implementation("org.springframework.cloud:spring-cloud-starter-kubernetes:1.1.10.RELEASE")
