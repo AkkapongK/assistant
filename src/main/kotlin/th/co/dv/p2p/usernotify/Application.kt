@@ -1,7 +1,5 @@
 package th.co.dv.p2p.usernotify
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -19,7 +17,7 @@ import org.springframework.retry.annotation.EnableRetry
 class Application {
 
 	companion object {
-		private val logger: Logger = LoggerFactory.getLogger(Application::class.java)
+//		private val logger: Logger = LoggerFactory.getLogger(Application::class.java)
 		@JvmStatic
 		fun main(args: Array<String>) {
 			val isJob = args.any { it.lowercase().contains("job") }
@@ -31,7 +29,7 @@ class Application {
 			SpringApplicationBuilder(Application::class.java)
 					.web(web) // .REACTIVE, .SERVLET
 					.run(*args)
-			logger.info("******************* SPRING BOOT STARTED ************************")
+//			logger.info("******************* SPRING BOOT STARTED ************************")
 		}
 	}
 }
