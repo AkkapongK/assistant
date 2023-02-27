@@ -63,7 +63,8 @@ class LineBotController {
             {
                 "prompt": "$prompt",
                 "model": "text-davinci-002",
-                "max_tokens": 1024
+                "max_tokens": 1024,
+                "user": "my-user-9991212121"
             }
         """.trimIndent()
 
